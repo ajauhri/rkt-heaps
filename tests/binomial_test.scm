@@ -5,8 +5,8 @@
   binomial-heap
   (define-test (isheap)
     "Checking isheap? works fine"
-    (assert-true (isheap? (makeheap 1)))
-    (assert-false (isheap? (cons 1 0))))
+    (assert-true (areheaps? (list (makeheap 1))))
+    (assert-false (areheaps? (list (cons 1 0)))))
   
   (define-test (findmin)
     "Checking findmin"
