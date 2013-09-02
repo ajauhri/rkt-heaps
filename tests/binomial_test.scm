@@ -18,11 +18,11 @@
     (assert-true (null? (meld (makeheap 1) (cons 1 2))))
     (assert-equal (cons (vector '1 1) 0) (meld (makeheap 1) (makeheap 1))))
   
-  (define-test (rootindex)
+  (define-test (root-index)
                "Checking root index gives the correct index for root value in the vector"
                (assert-equal 0 (rootindex 0)))
   
-  (define-test (emptyslot)
+  (define-test (empty-slot)
                "Checking empty slot in the vector"
                (assert-true (emptyslot? (make-vector 1 -1) 0))
                (assert-false (emptyslot? (vector '1 '2 '3) 1))
