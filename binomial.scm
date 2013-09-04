@@ -32,67 +32,54 @@
 ;; todo: find the resultant min. element of the combined heap
 (define (meld h1 h2)
   (if (areheaps? (list h1 h2))
-    (let ((v1_range (- (vector-length (car h1)) 1)) (v2_range (- (vector-length (car h2)) 1)))
-     ;; Description: Takes vectors only as input arguments and returns the resultant heap/vector. The combination is done with the following rules:
-     ;; - if both heaps have h_i's, then the resultant heap will get one b_(i+1). 
-     ;; - if more than 2 h_i's, then as before two will combine to form b_(i+1) and any one will stay as h_i
-     ;; - if neither heaps have a h_i, then the resultant shall also not have one unless not carried forward from h_(i-1)
-     ;; - if either one of the heaps have h_i, then it is also the h_i for the combined heap
-     (define (combine v1 v2 carry i)
-       (cond ((and (< v1_range (root-index i)) (< v2_range (root-index i))) carry)
-             ((< v1_range (root-index i)) (vector-append (compute-subvector v2 carry i) (combine v1 v2 (compute-carry v2 carry i) (+ i 1))))
-             ((< v2_range (root-index i)) (vector-append (compute-subvector v1 carry i) (combine v1 v2 (compute-carry v1 carry i) (+ i 1))))
-             ((empty-slot? v1 i) (vector-append (compute-subvector v2 carry i) (combine v1 v2 (compute-carry v2 carry i) (+ i 1))))
-             ((empty-slot? v2 i) (vector-append (compute-subvector v1 carry i) (combine v1 v2 (compute-carry v1 carry i) (+ i 1))))
-             
-             ((and (not (empty-slot? v1 i)) (not (empty-slot? v2 i)))
-                 (cond ((<= (value-at v1 i) (value-at v2 i))
-                      (vector-append (if (> (vector-length carry) 0) carry (make-vector (expt 2 i) -1))
-                                     (combine v1 v2 
-                                              (vector-append (subvector v1 (root-index i) (root-index (+ i 1)))
-                                                             (subvector v2 (root-index i) (root-index (+ i 1))))
-                                              (+ i 1))))
-                     ((> (value-at v1 i) (value-at v2 i))
-                      (vector-append (if (> (vector-length carry) 0) carry (make-vector (expt 2 i) -1)) 
-                                     (combine v1 v2 
-                                              (vector-append (subvector v2 (root-index i) (root-index (+ i 1)))
-                                                             (subvector v1 (root-index i) (root-index (+ i 1))))
-                                              (+ i 1))))))))
-     (cons (combine (car h1) (car h2) #()  0) 0)) 
+    (begin
+      (define (combine v1 v2 carry res i)
+        (let ((b1 (root-slot-valid? v1 i)) 
+              (b2 (root-slot-valid? v2 i)) 
+              (b3 (if (> (vector-length carry) 0) #t #f)))
+         (cond ((and (not b1) (not b2) (not b3)) res)
+               (else
+                 (let ((ithstate 
+                         (cond ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
+                               ((and (not b1) b2 (not b3)) (cons #() (vector-append res (subvector v2 (root-index i) (root-index (+ i 1))))))
+                               ((and (not b1) b2 b3) (cons (propcarry v2 carry i) (vector-append res (make-vector (expt 2 i) #f))))
+                               ((and b1 (not b2) (not b3)) (cons #() (vector-append res (subvector v1 (root-index i) (root-index (+ i 1))))))
+                               ((and b1 (not b2) b3) (cons (propcarry v1 carry i) (vector-append res (make-vector (expt 2 i) #f))))
+                               ((and b1 b2 (not b3)) (cons (constructcarry v1 v2) (vector-append res (make-vector (expt 2 i) #f))))
+                               ((and b1 b2 b3) (cons (propcarry v2 carry i) (vector-append res (subvector v1 (root-index i) (root-index (+ i 1)))))))))
+                   (combine v1 v2 (car ithstate) (cdr ithstate) (+ i 1)))))))
+      (cons (combine (car h1) (car h2) #() #() 0) 0))
     '()))
 
+;; Description: Takes vectors only as input arguments and returns the resultant heap/vector. The combination is done with the following rules:
+;; - if both heaps have h_i's, then the resultant heap will get one h_(i+1). 
+;; - if more than 2 h_i's, then as before two will combine to form h_(i+1) and any one will stay as h_i
+;; - if neither heaps have a h_i, then the resultant shall also not have one unless not carried forward from h_(i-1)
+;; - if either one of the heaps have h_i, then it is also the h_i for the combined heap 
+
+
+(define (propcarry v c) 
+  (if (<= (vector-ref c) (vector-ref v (root-index i))) 
+    (vector-append c (subvector v (root-index i) (root-index (+ i 1))))
+    (vector-append (subvector v (root-index i) (root-index (+ i 1)) c))))
+
+(define (constructcarry v1 v2 i)
+  (let ((start (root-index i)) (end (root-index (+ i 1))))
+   (if (<= (vector-ref v1 (root-index i)) (vector-ref v2 (root-index i)))
+     (vector-append (subvector v1 start end) (subvector v2 start end))
+     (vector-append (subvector v2 start end) (subvector v1 start end)))))
+
+;;; Description: Insert a positive integer to an existing heap and returns the resultant heap
 (define (insert h i)
   (meld h (makeheap i)))
-
-;;; HELPER FUNCTIONS ;;;
-(define (compute-carry v carry i)
-  (if (and (= (vector-length carry) (expt 2 i)) (not (empty-slot? v i)))
-    (if (<= (value-at v 1) (vector-ref carry 0))
-      (vector-append (subvector v (root-index i) (root-index (+ i 1))) carry)
-      (vector-append carry (subvector v (root-index i) (root-index (+ i 1)))))
-    #()))
-
-(define (compute-subvector v carry i)
-  (let ((len (expt 2 i)) 
-        (root-empty? (empty-slot? v i)))
-   (cond ((and (not (= (vector-length carry) len)) (not root-empty?)) 
-         (subvector v (root-index i) (root-index (+ i 1))))
-        ((and (not (= (vector-length carry) len)) root-empty?) 
-         (make-vector (expt 2 i) -1))
-        ((and (= (vector-length carry) len) (not root-empty?))
-         (make-vector (expt 2 i) -1))
-        ((and (= (vector-length carry) len) root-empty?)
-         carry))))
- 
 
 ;;; Description: Returns the vector index of the root of a tree in the heap
 (define (root-index i)
   (- (expt 2 i) 1))
 
 ;;; Description: Returns whether the root of a tree in the heap is vacant or not
-(define (empty-slot? vec i)
-  (eq? (value-at vec i) -1))
+(define (root-slot-valid? vec i)
+  (and (> (vector-length vec) (root-index i)) (not (specified? vec (root-index i)))))
 
-;;; Description: Returns the root element of a tree in the heap
-(define (value-at vec i)
-  (vector-ref vec (root-index i)))
+(define (specified? v i)
+  (if (not (vector-ref v i)) #f #t))
