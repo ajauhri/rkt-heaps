@@ -32,23 +32,23 @@
 ;; todo: find the resultant min. element of the combined heap
 (define (meld h1 h2)
   (if (areheaps? (list h1 h2))
-    (begin
-      (define (combine v1 v2 carry res i)
-        (let ((b1 (root-slot-valid? v1 i)) 
-              (b2 (root-slot-valid? v2 i)) 
-              (b3 (if (> (vector-length carry) 0) #t #f)))
-         (cond ((and (not b1) (not b2) (not b3)) res)
-               (else
-                 (let ((ithstate 
-                         (cond ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
-                               ((and (not b1) b2 (not b3)) (cons #() (vector-append res (subvector v2 (root-index i) (root-index (+ i 1))))))
-                               ((and (not b1) b2 b3) (cons (propcarry v2 carry i) (vector-append res (make-vector (expt 2 i) #f))))
-                               ((and b1 (not b2) (not b3)) (cons #() (vector-append res (subvector v1 (root-index i) (root-index (+ i 1))))))
-                               ((and b1 (not b2) b3) (cons (propcarry v1 carry i) (vector-append res (make-vector (expt 2 i) #f))))
-                               ((and b1 b2 (not b3)) (cons (constructcarry v1 v2) (vector-append res (make-vector (expt 2 i) #f))))
-                               ((and b1 b2 b3) (cons (propcarry v2 carry i) (vector-append res (subvector v1 (root-index i) (root-index (+ i 1)))))))))
-                   (combine v1 v2 (car ithstate) (cdr ithstate) (+ i 1)))))))
-      (cons (combine (car h1) (car h2) #() #() 0) 0))
+    (let ()
+      (define (couple v1 v2 carry res i)
+              (let ((b1 (root-slot-valid? v1 i)) 
+                    (b2 (root-slot-valid? v2 i)) 
+                    (b3 (if (> (vector-length carry) 0) #t #f)))
+                (cond ((and (not b1) (not b2) (not b3)) res)
+                      (else
+                        (let ((newargs 
+                                (cond ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
+                                      ((and (not b1) b2 (not b3)) (cons #() (vector-append res (subvector v2 (root-index i) (root-index (+ i 1))))))
+                                      ((and (not b1) b2 b3) (cons (propcarry v2 carry i) (vector-append res (make-vector (expt 2 i) #f))))
+                                      ((and b1 (not b2) (not b3)) (cons #() (vector-append res (subvector v1 (root-index i) (root-index (+ i 1))))))
+                                      ((and b1 (not b2) b3) (cons (propcarry v1 carry i) (vector-append res (make-vector (expt 2 i) #f))))
+                                      ((and b1 b2 (not b3)) (cons (constructcarry v1 v2 i) (vector-append res (make-vector (expt 2 i) #f))))
+                                      ((and b1 b2 b3) (cons (propcarry v2 carry i) (vector-append res (subvector v1 (root-index i) (root-index (+ i 1)))))))))
+                          (couple v1 v2 (car newargs) (cdr newargs) (+ i 1)))))))
+      (cons (couple (car h1) (car h2) #() #() 0) 0))
     '()))
 
 ;; Description: Takes vectors only as input arguments and returns the resultant heap/vector. The combination is done with the following rules:
@@ -58,10 +58,10 @@
 ;; - if either one of the heaps have h_i, then it is also the h_i for the combined heap 
 
 
-(define (propcarry v c) 
-  (if (<= (vector-ref c) (vector-ref v (root-index i))) 
+(define (propcarry v c i) 
+  (if (<= (vector-ref c 0) (vector-ref v (root-index i))) 
     (vector-append c (subvector v (root-index i) (root-index (+ i 1))))
-    (vector-append (subvector v (root-index i) (root-index (+ i 1)) c))))
+    (vector-append (subvector v (root-index i) (root-index (+ i 1))) c)))
 
 (define (constructcarry v1 v2 i)
   (let ((start (root-index i)) (end (root-index (+ i 1))))
@@ -79,7 +79,7 @@
 
 ;;; Description: Returns whether the root of a tree in the heap is vacant or not
 (define (root-slot-valid? vec i)
-  (and (> (vector-length vec) (root-index i)) (not (specified? vec (root-index i)))))
+  (and (> (vector-length vec) (root-index i)) (specified? vec (root-index i))))
 
 (define (specified? v i)
   (if (not (vector-ref v i)) #f #t))
