@@ -37,10 +37,11 @@
               (let ((b1 (root-slot-valid? v1 i)) 
                     (b2 (root-slot-valid? v2 i)) 
                     (b3 (if (> (vector-length carry) 0) #t #f)))
-                (cond ((and (not b1) (not b2) (not b3)) res)
+                (cond ((and (<= (vector-length v1) (root-index i)) (<= (vector-length v2) (root-index i)) (not b3)) res)
                       (else
                         (let ((newargs 
-                                (cond ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
+                                (cond ((and (not b1) (not b2) (not b3)) (cons #() (vector-append res (make-vector (expt 2 i) #f))))
+                                      ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
                                       ((and (not b1) b2 (not b3)) (cons #() (vector-append res (subvector v2 (root-index i) (root-index (+ i 1))))))
                                       ((and (not b1) b2 b3) (cons (propcarry v2 carry i) (vector-append res (make-vector (expt 2 i) #f))))
                                       ((and b1 (not b2) (not b3)) (cons #() (vector-append res (subvector v1 (root-index i) (root-index (+ i 1))))))
