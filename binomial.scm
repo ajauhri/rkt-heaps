@@ -7,7 +7,7 @@
 
 ;; Returns a new heap containing only element
 ;; Commentary:
-;; - the heap is structured in a pair with `car` pointing to a vector and `cdr` pointing to the index of the smallest root of a binomial tree in the heap.
+;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make min a constant time operation, the index to the min (root of a tree in the forest) is also stored as the `cdr` of another pair.
 (define (makeheap i)
   (cons (cons (make-vector 1 i) 1) 0))
 
@@ -17,8 +17,8 @@
 ;;- if actual argument is not a heap, function returns 0
 (define (findmin h)
   (if (checkheap? h)
-    (vector-ref (car h) (cdr h))
-    0))
+    (vector-ref (car (car h)) (cdr h))
+    #f))
 
 
 ;;Returns a heap which a combination of the two heaps provided as arguments to the method. 
@@ -44,7 +44,6 @@
                           (couple v1 v2 (floor (/ s1 2)) (floor (/ s2 2)) (car newargs) (cdr newargs) (* i 2)))))))
       (let ((res (cons (couple (car (car h1)) (car (car h2)) (cdr (car h1)) (cdr (car h2)) #() #() 1) (+ (cdr (car h1)) (cdr (car h2))))))
        (define (getmin h len i m)
-         (bkpt 'getmin) 
          (if (= len 0) 
            (- m 1) 
            (getmin h (floor (/ len 2)) (* i 2) (cond ((and (= (modulo len 2) 1) (eq? m #f)) i)
