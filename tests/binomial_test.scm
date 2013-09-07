@@ -17,6 +17,10 @@
     "Checking insert"
     (assert-true (heap? (insert (makeheap 1) 2))))
   
+  (define-test (deletemin)
+    "Checking deletemin"
+    (assert-false (deletemin (cons (cons (vector 2 3 4) 3) 2))))
+  
   (define-test (heaps?)
     "Checking heaps? works fine"
     (assert-true (heaps? (makeheap 1))) 

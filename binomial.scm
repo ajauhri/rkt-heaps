@@ -14,44 +14,55 @@
 ;; Returns the min element in the heap
 ;; Commentary: 
 ;;- vector-ref is takes constant time - www.eecs.berkeley.edu/~bh/ssch23/vectors.html 
-;;- if actual argument is not a heap, function returns 0
+;;- if min is not provided or argument not heap. #f is returned 
 (define (findmin h)
-  (if (heap? h)
+  (if (and (heap? h) (not (eq? (cdr h) #f)))
     (vector-ref (car (car h)) (cdr h))
     #f))
 
-
-;;Insert a positive integer to an existing heap and returns the resultant heap
+;; Insert a positive integer to an existing heap and returns the resultant heap
 (define (insert h i)
   (meld h (makeheap i)))
 
+;; Deletes the root of the tree with the min value in heap. Melds the remaining values
 (define (deletemin h)
-  (if (heap? h)
-    #t
+  (if (and (heap? h) (not (eq? (cdr h) #f)))
+    (let ((min-index (cdr h))
+          (orig-vec (vector-copy (car (car h))))
+          (count (cdr (car h)))
+          (tree-start (+ 1 (cdr h)))
+          (tree-end (+ 1 (* (cdr h) 2))))
+      (let ((tree (subvector orig-vec tree-start tree-end)))
+       (subvector-fill! orig-vec min-index tree-end #f) 
+       (if (= (vector-length orig-vec) 1)
+         (cons (cons #() 0) #f)
+         (meld 
+           (cons (cons orig-vec (- count (+ min-index 1))) #f)
+           (cons (cons tree (- tree-end tree-start)) #f)))))
     #f))
 
-;;Returns a heap which a combination of the two heaps provided as arguments to the method. 
+;; Returns a heap which a combination of the two heaps provided as arguments to the method. 
 (define (meld h1 h2)
   (if (heaps? h1 h2)
     (let ()
-      (define (couple v1 v2 s1 s2 carry res i)
-              (let ((b1 (root-slot-valid? s1)) 
-                    (b2 (root-slot-valid? s2)) 
-                    (b3 (if (> (vector-length carry) 0) #t #f)))
-                (cond ((and (= s1 0) (= s2 0) (not b3)) res)
-                      (else
-                        (let ((newargs 
-                                (cond ((and (not b1) (not b2) (not b3)) (cons #() (vector-append res (make-vector i #f))))
-                                      ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
-                                      ((and (not b1) b2 (not b3)) (cons #() (vector-append res (propres v2 i))))
-                                      ((and (not b1) b2 b3) (cons (propcarry v2 carry i) (vector-append res (make-vector i #f))))
-                                      ((and b1 (not b2) (not b3)) (cons #() (vector-append res (propres v1 i))))
-                                      ((and b1 (not b2) b3) (cons (propcarry v1 carry i) (vector-append res (make-vector i #f))))
-                                      ((and b1 b2 (not b3)) (cons (constructcarry v1 v2 i) (vector-append res (make-vector i #f))))
-                                      ((and b1 b2 b3) (cons (propcarry v2 carry i) (vector-append res (propres v1 i)))))))
-                          (couple v1 v2 (floor (/ s1 2)) (floor (/ s2 2)) (car newargs) (cdr newargs) (* i 2)))))))
-      (let ((res (cons (couple (car (car h1)) (car (car h2)) (cdr (car h1)) (cdr (car h2)) #() #() 1) 
-                       (+ (cdr (car h1)) (cdr (car h2))))))
+     (define (couple v1 v2 s1 s2 carry res i)
+       (let ((b1 (root-slot-valid? s1)) 
+             (b2 (root-slot-valid? s2)) 
+             (b3 (if (> (vector-length carry) 0) #t #f)))
+         (cond ((and (= s1 0) (= s2 0) (not b3)) res)
+               (else
+                 (let ((newargs 
+                         (cond ((and (not b1) (not b2) (not b3)) (cons #() (vector-append res (make-vector i #f))))
+                               ((and (not b1) (not b2) b3) (cons #() (vector-append res carry))) 
+                               ((and (not b1) b2 (not b3)) (cons #() (vector-append res (propres v2 i))))
+                               ((and (not b1) b2 b3) (cons (propcarry v2 carry i) (vector-append res (make-vector i #f))))
+                               ((and b1 (not b2) (not b3)) (cons #() (vector-append res (propres v1 i))))
+                               ((and b1 (not b2) b3) (cons (propcarry v1 carry i) (vector-append res (make-vector i #f))))
+                               ((and b1 b2 (not b3)) (cons (constructcarry v1 v2 i) (vector-append res (make-vector i #f))))
+                               ((and b1 b2 b3) (cons (propcarry v2 carry i) (vector-append res (propres v1 i)))))))
+                   (couple v1 v2 (floor (/ s1 2)) (floor (/ s2 2)) (car newargs) (cdr newargs) (* i 2)))))))
+     (let ((res (cons (couple (car (car h1)) (car (car h2)) (cdr (car h1)) (cdr (car h2)) #() #() 1) 
+                      (+ (cdr (car h1)) (cdr (car h2))))))
        (cons res 
              (getmin (car res) (cdr res) 1 #f))))
     #f))
@@ -59,7 +70,6 @@
 ;;;
 ;;; Helper functions
 ;;;
-
 (define (getmin v len i m) 
   (if (= len 0)
     (- m 1)
@@ -75,17 +85,15 @@
 ;; Asserts whether the given argument is a valid heap or not
 ;; Commentary:
 ;; - based on the underlying implementation structural formation of a heap, it checks whether they are correctly specified in the argument
-;; - it is checked whether the values of the heap should be stored in a vector
-;; - it is checked that the index of the min element is at most equal to vector-lenght/2 (since the vector length will have padded #f in all trees whose root index is represented by 0 bit when writing the number of elements in binary representation 
+;; - it is checked whether the values of the heap are stored in a vector
+;; - it is checked that the index of the min is either not specified or if specified, it should be correct
 ;; - it is checked that the number of valid elements in the heap are at most the length of the entire forest(vector) 
-;; - it is checked that the min is correctly indexed 
 ;; - doesn't check whether the heap condition is maintained or not
 ;; - although this is not a thorough check of the validity of the heap condition, its use is relevant since it validates what is passed to meld and deletemin methods 
 (define (heap? h)
   (and (vector? (car (car h))) 
-       (<= (cdr h) (floor (/ (vector-length (car (car h))) 2))) 
-       (<= (cdr (car h)) (vector-length (car (car h))))
-       (= (getmin (car (car h)) (cdr (car h)) 1 #f) (cdr h))))
+       (or (eq? (cdr h) #f) (= (cdr h) (getmin (car (car h)) (cdr (car h)) 1 #f)))
+       (<= (cdr (car h)) (vector-length (car (car h))))))
 
 ;; Returns ith bit of v
 (define (propres v i)
