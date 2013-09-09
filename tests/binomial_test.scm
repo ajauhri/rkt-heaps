@@ -1,5 +1,4 @@
-(load "test-manager/load.scm")
-(load "../binomial.scm")
+(require "../binomial.scm")
 
 (in-test-group
   binomial-heap

@@ -6,6 +6,7 @@
 ;; insert(h,i)  
 ;; deletemin(h) 
 ;; meld(h,h') 
+(provide makeheap findmin insert deletemin meld)
 
 ;; Returns a new heap containing only element
 ;; Commentary:
