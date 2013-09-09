@@ -1,3 +1,5 @@
+#lang racket
+(require racket/trace)
 ;; Book-keeper of the functions to be implemented 
 ;; makeheap(i) 
 ;; findmin(h) 
@@ -16,24 +18,26 @@
 ;;- vector-ref is takes constant time - www.eecs.berkeley.edu/~bh/ssch23/vectors.html 
 ;;- if min is not provided or argument not heap. #f is returned 
 (define (findmin h)
-  (if (and (heap? h) (not (eq? (cdr h) #f)))
+  (if (and (heap? h) (not (eq? (cdr h) #f)))                    ;#f check is necessary since heap? is fine with it
     (vector-ref (car (car h)) (cdr h))
     #f))
 
 ;; Insert a positive integer to an existing heap and returns the resultant heap
 (define (insert h i)
-  (meld h (makeheap i)))
+  (if (heap? h)
+    (meld h (makeheap i))
+    #f))
 
 ;; Deletes the root of the tree with the min value in heap. Melds the remaining values
 (define (deletemin h)
-  (if (and (heap? h) (not (eq? (cdr h) #f)))
+  (if (and (heap? h) (not (eq? (cdr h) #f)))                   
     (let ((min-index (cdr h))
           (orig-vec (vector-copy (car (car h))))
           (count (cdr (car h)))
           (tree-start (+ 1 (cdr h)))
           (tree-end (+ 1 (* (cdr h) 2))))
-      (let ((tree (subvector orig-vec tree-start tree-end)))
-       (subvector-fill! orig-vec min-index tree-end #f) 
+      (let ((tree (vector-copy orig-vec tree-start tree-end)))
+       (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f)) 
        (if (= (vector-length orig-vec) 1)
          (cons (cons #() 0) #f)
          (meld 
@@ -80,7 +84,7 @@
 
 ;; Predicate based on the structural formation of binomial heap.
 (define (heaps? . h)
-  (for-all? h heap?))
+  (andmap heap? h))
 
 ;; Asserts whether the given argument is a valid heap or not
 ;; Commentary:
@@ -89,7 +93,9 @@
 ;; - it is checked that the index of the min is either not specified or if specified, it should be correct
 ;; - it is checked that the number of valid elements in the heap are at most the length of the entire forest(vector) 
 ;; - doesn't check whether the heap condition is maintained or not
-;; - although this is not a thorough check of the validity of the heap condition, its use is relevant since it validates what is passed to meld and deletemin methods 
+;; - it is fine to have #f stored as min. findmin and deletemin will make checks if that is the case and return unspecified values
+;; - Why is #f considered invalid? deletemin which subsequently calls meld, could provide a heap which does not have the min identified. Example: a heap with four elements, will have a vector #(#f #f #f)
+;; - this check is not thorough
 (define (heap? h)
   (and (vector? (car (car h))) 
        (or (eq? (cdr h) #f) (= (cdr h) (getmin (car (car h)) (cdr (car h)) 1 #f)))
@@ -97,20 +103,20 @@
 
 ;; Returns ith bit of v
 (define (propres v i)
-  (subvector v (- i 1) (- (* i 2) 1)))
+  (vector-copy v (- i 1) (- (* i 2) 1)))
 
 ;; Adds ith bit of v to the carry for propagation. Maintains the heap condition
 (define (propcarry v c i) 
   (if (<= (vector-ref c 0) (vector-ref v (- i 1))) 
-    (vector-append c (subvector v (- i 1) (- (* i 2) 1)))
-    (vector-append (subvector v (- i 1) (- (* i 2) 1)) c)))
+    (vector-append c (vector-copy v (- i 1) (- (* i 2) 1)))
+    (vector-append (vector-copy v (- i 1) (- (* i 2) 1)) c)))
 
 ;; Constructs ith bit of v1 and v2 as carry for propagation. The construction maintains the heap condition.
 (define (constructcarry v1 v2 i)
   (let ((start (- i 1)) (end (- (* i 2) 1)))
    (if (<= (vector-ref v1 start) (vector-ref v2 start))
-     (vector-append (subvector v1 start end) (subvector v2 start end))
-     (vector-append (subvector v2 start end) (subvector v1 start end)))))
+     (vector-append (vector-copy v1 start end) (vector-copy v2 start end))
+     (vector-append (vector-copy v2 start end) (vector-copy v1 start end)))))
 
 ;; Returns whether the root of a tree in the heap is vacant or not
 (define (root-slot-valid? s)
