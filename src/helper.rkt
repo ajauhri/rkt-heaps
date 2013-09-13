@@ -52,4 +52,4 @@
 ;; Returns whether the root of a tree in the heap is vacant or not
 (define (root-slot-valid? s)
   (cond ((= (modulo s 2) 1) #t)
-        ((= (modulo s 2) 0) #f))) 
+        (else #f))) 

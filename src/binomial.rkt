@@ -56,7 +56,9 @@
        (let ((b1 (root-slot-valid? s1)) 
              (b2 (root-slot-valid? s2)) 
              (b3 (if (> (vector-length carry) 0) #t #f)))
-         (cond ((and (= s1 0) (= s2 0) (not b3)) res)
+         (cond ((and (= (min s1 s2) 0) (not b3)) (vector-append res (cond ((and (= s1 0) (= s2 0) #()))
+                                                                          ((= s1 0) (vector-copy v2 (- i 1) (vector-length v2)))
+                                                                          ((= s2 0) (vector-copy v1 (- i 1) (vector-length v1))))))
                (else
                  (let ((newargs 
                          (cond ((and (not b1) (not b2) (not b3)) (cons #() (vector-append res (make-vector i #f))))
