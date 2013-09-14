@@ -1,6 +1,6 @@
 #lang racket
 
-(require rackunit "../src/helper.rkt" "../src/binomial.rkt")
+(require rackunit "../src/binomial_helper.rkt" "../src/binomial.rkt")
 
 (run-test
   (test-suite

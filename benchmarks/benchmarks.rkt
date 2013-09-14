@@ -9,4 +9,4 @@
   (for/vector #:length s ([i (in-range s)]) (random R)))
 
 (define (b-makeheap v)
-  (for/fold ([h (makeheap (random R))]) ([val (in-vector v)]) (insert h val)))
+  (for/fold ([h (makeheap (random R))]) ((val (in-vector v))) (insert h val)))

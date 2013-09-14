@@ -1,13 +1,12 @@
 #lang racket
-;; Book-keeper of the functions to be implemented 
-;; makeheap(i) 
-;; findmin(h) 
-;; insert(h,i)  
-;; deletemin(h) 
-;; meld(h,h') 
+;; Core functions that implement Binomial heaps. Invented by J. Vuillemin in 1978. They are a special case of Fibonacci heaps. Core functions and cost are as follows:
+;; makeheap     - O(1)
+;; findmin      - O(1) 
+;; insert       - O(1) 
+;; deletemin    - O(log n)
+;; meld         - O(lon n) (eager version)
 
-(require "helper.rkt")
-
+(require "binomial_helper.rkt")
 (provide makeheap findmin insert deletemin meld)
 
 ;; Returns a new heap containing only element
