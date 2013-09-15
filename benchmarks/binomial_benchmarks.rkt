@@ -55,6 +55,6 @@
   (plot (list 
           (lines (get-plot-data time-findmin ssize esize step freq) #:color 1 #:label "findmin")
           (lines (get-plot-data time-deletemin ssize esize step freq) #:color 2 #:label "deletemin")
-          (lines (get-plot-data time-insert ssize esize step freq) #:color 3 #:label "insert")
-          (lines (get-plot-data time-meld ssize esize step freq) #:color 4 #:label "meld")) ;my intuition for the graph to be proportional findmin, is due to the copy of the vector. deletemin involves finding the min other than the copy of vector hence more cost
+          (lines (get-plot-data time-insert ssize esize step freq) #:color 3 #:label "insert") ;my intuition for the graph to be proportional findmin, is due to the copy of the vector. deletemin involves finding the min other than the copy of vector hence more cost
+          (lines (get-plot-data time-meld ssize esize step freq) #:color 4 #:label "meld")) 
         #:x-label "n" #:y-label "Average time (ms)"))
