@@ -4,7 +4,7 @@
 ;; findmin      - O(1) 
 ;; insert       - O(1) 
 ;; deletemin    - O(log n)
-;; meld         - O(lon n) (eager version)
+;; meld         - O(log n) (eager version)
 
 (require "binomial_helper.rkt")
 (provide makeheap findmin insert deletemin meld)
