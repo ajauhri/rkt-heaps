@@ -5,9 +5,11 @@
 ;; insert       - O(1) 
 ;; deletemin    - O(log n)
 ;; meld         - O(log n) (eager version)
+;; Additional functions:
+;; count        - O(1)
 
 (require "binomial_helper.rkt")
-(provide makeheap findmin insert deletemin meld)
+(provide makeheap findmin insert deletemin meld count)
 
 ;; Returns a new heap containing only element
 ;; Commentary:
@@ -73,5 +75,11 @@
                       (+ (cdr (car h1)) (cdr (car h2))))))
        (cons res 
              (getmin (car res) (cdr res) 1 #f))))
+    #f))
+
+;; Returns the number of elements in the heap. The vector size for storing the all elements may be greater than the count.
+(define (count h) 
+  (if (heap? h)
+    (cdr (car h))
     #f))
 
