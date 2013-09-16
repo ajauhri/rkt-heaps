@@ -14,8 +14,8 @@
 ;; Returns a new heap containing only element
 ;; Commentary:
 ;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make min a constant time operation, the index to the min (root of a tree in the forest) is also stored as the `cdr` of another pair.
-(define (makeheap i)
-  (cons (cons (make-vector 1 i) 1) 0))
+(define (makeheap val)
+  (cons (cons (make-vector 1 val) 1) 0))
 
 ;; Returns the min element in the heap
 ;; Commentary: 
