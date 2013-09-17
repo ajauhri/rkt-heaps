@@ -32,3 +32,10 @@
      (set-mcar! (mcar h) (vector-append node-vector (vector (make-node val)))))
     #f))
 
+(define (meld h1 h2)
+  (if (heaps? h1 h2)
+    (let ((rts (if (< (vector-length (get-roots h1)) (vector-length (get-roots h2))
+                      (vector-append (vector-map (lambda (i) (+ v))))
+                      )))))
+    ) 
+  )

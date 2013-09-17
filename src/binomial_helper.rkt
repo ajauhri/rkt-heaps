@@ -7,11 +7,12 @@
 
 (define (getmin v len i m) 
   (if (= len 0)
-    (- m 1)
-    (getmin v (floor (/ len 2)) (* i 2) (cond ((and (= (modulo len 2) 1) (eq? m #f)) i)
+    m
+    (getmin v (floor (/ len 2)) (* i 2) (cond ((and (= (modulo len 2) 1) (eq? m #f)) (- i 1))
                                               ((= (modulo len 2) 0) m)
-                                              (else
-                                                (if (< (vector-ref v (- i 1)) (vector-ref v (- m 1))) i m))))))
+                                              (else (if (< (vector-ref v (- i 1)) (vector-ref v m)) 
+                                                      (- i 1) 
+                                                      m))))))
 
 ;; Predicate based on the structural formation of binomial heap.
 (define (heaps? . h)
@@ -23,13 +24,14 @@
 ;; - it is checked whether the values of the heap are stored in a vector
 ;; - it is checked that the index of the min is either not specified or if specified, it should be correct
 ;; - it is checked that the number of valid elements in the heap are at most the length of the entire forest(vector) 
-;; - doesn't check whether the heap condition is maintained or not
+;; - doesn't check whether the heap condition is valid for nodes of the forest
 ;; - it is fine to have #f stored as min. findmin and deletemin will make checks if that is the case and return unspecified values
-;; - Why is #f considered invalid? deletemin which subsequently calls meld, could provide a heap which does not have the min identified. Example: a heap with four elements, will have a vector #(#f #f #f)
+;; - Why is #f allowed in the cdr of the pair? 
+;;   deletemin which subsequently calls meld, could provide a heap which does not have the min identified. Example: a heap with four elements, will have a vector #(#f #f #f)
 ;; - this check is not thorough
 (define (heap? h)
   (and (vector? (car (car h))) 
-       (or (eq? (cdr h) #f) (= (cdr h) (getmin (car (car h)) (cdr (car h)) 1 #f)))
+       (or (eq? (cdr h) #f) (= (cdr h) (vector-ref (car (car h)) (getmin (car (car h)) (cdr (car h)) 1 #f))))
        (<= (cdr (car h)) (vector-length (car (car h))))))
 
 ;; Returns ith bit of v

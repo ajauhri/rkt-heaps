@@ -9,13 +9,14 @@
 ;; count        - O(1)
 
 (require "binomial_helper.rkt")
+
 (provide makeheap findmin insert deletemin meld count)
 
 ;; Returns a new heap containing only element
 ;; Commentary:
-;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make min a constant time operation, the index to the min (root of a tree in the forest) is also stored as the `cdr` of another pair.
+;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make findmin a constant time operation, the min is stored as the `cdr` of another pair.
 (define (makeheap val)
-  (cons (cons (make-vector 1 val) 1) 0))
+  (cons (cons (make-vector 1 val) 1) val))
 
 ;; Returns the min element in the heap
 ;; Commentary: 
@@ -23,7 +24,7 @@
 ;;- if min is not provided or argument not heap. #f is returned 
 (define (findmin h)
   (if (and (heap? h) (not (eq? (cdr h) #f)))                    ;#f check is necessary since heap? is fine with it
-    (vector-ref (car (car h)) (cdr h))
+    (cdr h) 
     #f))
 
 ;; Insert a positive integer to an existing heap and returns the resultant heap
@@ -35,18 +36,22 @@
 ;; Deletes the root of the tree with the min value in heap. Melds the remaining values
 (define (deletemin h)
   (if (and (heap? h) (not (eq? (cdr h) #f)))                   
-    (let ((min-index (cdr h))
-          (orig-vec (vector-copy (car (car h))))
-          (count (cdr (car h)))
-          (tree-start (+ 1 (cdr h)))
-          (tree-end (+ 1 (* (cdr h) 2))))
-      (let ((tree (vector-copy orig-vec tree-start tree-end)))
-       (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f)) 
-       (if (= (vector-length orig-vec) 1)
-         (cons (cons #() 0) #f)
-         (meld 
-           (cons (cons orig-vec (- count (+ min-index 1))) #f)
-           (cons (cons tree (- tree-end tree-start)) #f)))))
+    (let ((min-index (getmin (car (car h)) (cdr (car h)) 1 #f)))
+      (let ((orig-vec (vector-copy (car (car h))))
+                (count (cdr (car h)))
+                (tree-start (+ 1 min-index))
+                (tree-end (+ 1 (* min-index 2))))
+        (let ((tree (vector-copy orig-vec tree-start tree-end)))
+         (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f))
+         (cond ((= count 1) (cons (cons #() 0) #f))
+               ((= 0 (- tree-end tree-start)) (cons (cons orig-vec (- count (+ min-index 1)))
+                                                    (vector-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f))))
+               ((= 0 (- count (+ min-index 1))) (cons (cons tree (- tree-end tree-start)) 
+                                                      (vector-ref tree (getmin tree (- tree-end tree-start) 1 #f))))
+               (else (meld (cons (cons orig-vec (- count (+ min-index 1))) 
+                                 (vector-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f)))
+                           (cons (cons tree (- tree-end tree-start))
+                                 (vector-ref tree (getmin tree (- tree-end tree-start) 1 #f)))))))))
     #f))
 
 ;; Returns a heap which a combination of the two heaps provided as arguments to the method. 
@@ -72,9 +77,14 @@
                                ((and b1 b2 b3) (cons (propcarry v2 carry i) (vector-append res (propres v1 i)))))))
                    (couple v1 v2 (floor (/ s1 2)) (floor (/ s2 2)) (car newargs) (cdr newargs) (* i 2)))))))
      (let ((res (cons (couple (car (car h1)) (car (car h2)) (cdr (car h1)) (cdr (car h2)) #() #() 1) 
-                      (+ (cdr (car h1)) (cdr (car h2))))))
+                      (+ (cdr (car h1)) (cdr (car h2)))))
+           (minh1 (findmin h1))
+           (minh2 (findmin h2)))
        (cons res 
-             (getmin (car res) (cdr res) 1 #f))))
+             (cond ((eq? #f minh1) minh2)
+                   ((eq? #f minh2) minh1)
+                   ((< minh1 minh2) minh1)
+                   (else minh2)))))
     #f))
 
 ;; Returns the number of elements in the heap. The vector size for storing the all elements may be greater than the count.
@@ -82,4 +92,3 @@
   (if (heap? h)
     (cdr (car h))
     #f))
-

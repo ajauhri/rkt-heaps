@@ -5,7 +5,7 @@
     "binomial heap"
     (test-case
       "Checking makeheap creates a heap with the correct structure"
-      (check-true (equal? (cons (cons (vector 1) 1) 0) (makeheap 1))))
+      (check-true (equal? (cons (cons (vector 1) 1) 1) (makeheap 1))))
 
     (test-case
       "Checking findmin with just one value"
@@ -28,12 +28,12 @@
       (check-true (equal? (insert (makeheap 1) 2) (meld (makeheap 1) (makeheap 2)))))
 
     (test-case
-      "Checking deletemin"
-      (check-false (deletemin (cons (cons (vector 2 3 4) 3) 2))))
+      "Checking deletemin with wrong min value"
+      (check-false (deletemin (cons (cons (vector 2 3 4) 3) 3))))
     
     (test-case 
       "checking deletemin with 2^n elements"
-      (check-equal? (cons (cons (vector 2) 1) 0) (deletemin (meld (makeheap 1) (makeheap 2)))))
+      (check-equal? (cons (cons (vector 2) 1) 2) (deletemin (meld (makeheap 1) (makeheap 2)))))
     
     (test-case
       "Checking meld for not valid heaps"

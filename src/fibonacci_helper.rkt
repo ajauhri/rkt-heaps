@@ -1,7 +1,7 @@
 #lang racket
 
 (require racket/mpair)
-(provide make-node get-roots get-node-vector get-value heap?)
+(provide make-node get-roots get-node-vector get-value heap? heaps?)
 
 (define (make-node val)
   (vector #f val #f (vector)))
@@ -16,3 +16,6 @@
   (vector-ref n 1))
 
 (define (heap? h) #t)
+
+(define (heaps? . h)
+  (andmap heap? h))
