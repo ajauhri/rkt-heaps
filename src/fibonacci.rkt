@@ -7,18 +7,28 @@
 ;; meld
 ;; decrement
 ;; delete
-(require racket/mpair "fibonacci_helper.rkt")
-(provide makeheap findmin)
+(require racket/mpair "fibonacci_helper.rkt" compatibility/mlist)
+
+(provide makeheap findmin insert!)
 
 (define (makeheap val)
-  (mcons 
-    (mcons 
-      (make-vector 1 (make-node val)) 
-      0) 
-    (make-hash)))
+  (let ((rts (vector (vector 0))))
+   (mcons 
+    (mcons (vector (make-node val)) 0) 
+    rts)))
 
 (define (findmin h)
   (if (heap? h)
-    (vector-ref (get-vector h) (mcdr (mcar h)))
+    (get-value (vector-ref (get-node-vector h) (mcdr (mcar h))))
+    #f))
+
+(define (insert! h val)
+  (if (heap? h)
+    (let ((rts (get-roots h))
+          (zerorank (vector-ref (get-roots h) 0))
+          (node-vector (get-node-vector h)))
+     (vector-set! rts 0 (vector-append zerorank (vector (vector-length node-vector))))
+     (when (< val (findmin h)) (set-mcdr! (mcar h) (vector-length node-vector)))
+     (set-mcar! (mcar h) (vector-append node-vector (vector (make-node val)))))
     #f))
 

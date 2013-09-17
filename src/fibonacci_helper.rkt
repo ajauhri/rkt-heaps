@@ -1,18 +1,18 @@
 #lang racket
 
 (require racket/mpair)
-(provide make-node get-roots get-vector heap?)
+(provide make-node get-roots get-node-vector get-value heap?)
 
 (define (make-node val)
-  (mcons val (mcons #f (vector))))
+  (vector #f val #f (vector)))
 
 (define (get-roots h)
   (mcdr h))
 
-(define (get-vector h)
+(define (get-node-vector h)
   (mcar (mcar h)))
 
-(define (get-value v)
-  (mcons v))
+(define (get-value n)
+  (vector-ref n 1))
 
 (define (heap? h) #t)
