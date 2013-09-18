@@ -40,8 +40,8 @@
       (check-equal? (cons (cons (vector #f 2 3) 2) 2) (deletemin (insert (meld (makeheap 2) (makeheap 3)) 1))))
 
     (test-case
-      "Checking meld for not valid heaps as min is not correct"
-      (check-false (meld (makeheap 1) (cons (cons #(1 2 3) 3) 2))))
+      "Checking meld for wrong min value. Since, heap-lazy? is applied here, this will pass"
+      (check-equal? (cons (cons (vector #f #f #f 1 1 2 3) 4) 1) (meld (makeheap 1) (cons (cons #(1 2 3) 3) 2))))
 
     (test-case
       "Checking a simple meld"

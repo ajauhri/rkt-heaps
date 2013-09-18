@@ -44,14 +44,10 @@
         (let ((tree (vector-copy orig-vec tree-start tree-end)))
          (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f))
          (cond ((= count 1) (cons (cons #() 0) #f))
-               ((= 0 (- tree-end tree-start)) (cons (cons orig-vec (- count (+ min-index 1)))
-                                                    (vector-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f))))
-               ((= 0 (- count (+ min-index 1))) (cons (cons tree (- tree-end tree-start)) 
-                                                      (vector-ref tree (getmin tree (- tree-end tree-start) 1 #f))))
                (else (meld (cons (cons orig-vec (- count (+ min-index 1))) 
-                                 (vector-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f)))
+                                 (vec-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f)))
                            (cons (cons tree (- tree-end tree-start))
-                                 (vector-ref tree (getmin tree (- tree-end tree-start) 1 #f)))))))))
+                                 (vec-ref tree (getmin tree (- tree-end tree-start) 1 #f)))))))))
     #f))
 
 ;; Returns a heap which a combination of the two heaps provided as arguments to the method. 
