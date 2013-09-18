@@ -3,7 +3,7 @@
 ;;; Helper functions
 ;;;
 
-(provide getmin heap? heaps? propres propcarry constructcarry root-slot-valid?)
+(provide getmin heap? heaps? heap-lazy? propres propcarry constructcarry root-slot-valid?)
 
 (define (getmin v len i m) 
   (if (= len 0)
@@ -32,6 +32,11 @@
 (define (heap? h)
   (and (vector? (car (car h))) 
        (or (eq? (cdr h) #f) (= (cdr h) (vector-ref (car (car h)) (getmin (car (car h)) (cdr (car h)) 1 #f))))
+       (<= (cdr (car h)) (vector-length (car (car h))))))
+
+(define (heap-lazy? h)
+  (and (vector? (car (car h)))
+       (or (eq? (cdr h) #f) (>= (cdr h) 0))
        (<= (cdr (car h)) (vector-length (car (car h))))))
 
 ;; Returns ith bit of v

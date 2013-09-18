@@ -23,13 +23,13 @@
 ;;- vector-ref is takes constant time - www.eecs.berkeley.edu/~bh/ssch23/vectors.html 
 ;;- if min is not provided or argument not heap. #f is returned 
 (define (findmin h)
-  (if (and (heap? h) (not (eq? (cdr h) #f)))                    ;#f check is necessary since heap? is fine with it
+  (if (and (heap-lazy? h) (not (eq? (cdr h) #f)))                    ;#f check is necessary since heap? is fine with it
     (cdr h) 
     #f))
 
 ;; Insert a positive integer to an existing heap and returns the resultant heap
 (define (insert h i)
-  (if (heap? h)
+  (if (heap-lazy? h)
     (meld h (makeheap i))
     #f))
 
@@ -89,6 +89,6 @@
 
 ;; Returns the number of elements in the heap. The vector size for storing the all elements may be greater than the count.
 (define (count h) 
-  (if (heap? h)
+  (if (heap-lazy? h)
     (cdr (car h))
     #f))

@@ -22,7 +22,7 @@
     (test-case
       "Checking insert with invalid heap"
       (check-false (insert (cons (cons (list 1 2 3) 3) 0) 1)))
-    
+
     (test-case
       "Checking insert with valid heap"
       (check-true (equal? (insert (makeheap 1) 2) (meld (makeheap 1) (makeheap 2)))))
@@ -30,14 +30,20 @@
     (test-case
       "Checking deletemin with wrong min value"
       (check-false (deletemin (cons (cons (vector 2 3 4) 3) 3))))
-    
+
     (test-case 
-      "checking deletemin with 2^n elements"
+      "checking deletemin with 2^n elements & since there are only 2 elements, the resultant sub-heap will be empty"
       (check-equal? (cons (cons (vector 2) 1) 2) (deletemin (meld (makeheap 1) (makeheap 2)))))
-    
+
+    (test-case 
+      "Checking deletemin with min element being the only element of its tree"
+      (check-equal? (cons (cons (vector #f 2 3) 2) 2) (deletemin (insert (meld (makeheap 2) (makeheap 3)) 1))))
+
     (test-case
-      "Checking meld for not valid heaps"
-      (check-false (meld (makeheap 1) (cons (cons #(1 2 3) 3) 2)))
-      (check-false (meld (makeheap 1) (cons (cons '(1 2 3) 3) 0)))
-      (check-true (equal? (cons (cons (vector #f 1 1) 2) 1) (meld (makeheap 1) (makeheap 1)))))))
+      "Checking meld for not valid heaps as min is not correct"
+      (check-false (meld (makeheap 1) (cons (cons #(1 2 3) 3) 2))))
+
+    (test-case
+      "Checking a simple meld"
+      (check-true (equal? (cons (cons (vector #f 1 1) 2) 1) (meld (makeheap 1) (makeheap 1))))))) 
 
