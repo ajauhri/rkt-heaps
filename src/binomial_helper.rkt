@@ -3,20 +3,16 @@
 ;;; Helper functions
 ;;;
 
-(provide getmin heap? heaps? heap-lazy? propres propcarry constructcarry root-slot-valid? vec-ref)
+(provide getmin heap? heap-lazy? propres propcarry constructcarry root-slot-valid? vec-ref)
 
 (define (getmin v len i m) 
-  (if (= len 0)
-    m
-    (getmin v (floor (/ len 2)) (* i 2) (cond ((and (= (modulo len 2) 1) (eq? m #f)) (- i 1))
-                                              ((= (modulo len 2) 0) m)
-                                              (else (if (< (vector-ref v (- i 1)) (vector-ref v m)) 
-                                                      (- i 1) 
-                                                      m))))))
-
-;; Predicate based on the structural formation of binomial heap. 
-(define (heaps? . h)
-  (andmap heap-lazy? h))
+  (if (= len 0) m
+    (getmin v (floor (/ len 2)) 
+            (* i 2) 
+            (cond ((and (= (modulo len 2) 1) (eq? m #f)) (- i 1))
+                  ((= (modulo len 2) 0) m)
+                  (else (if (< (vector-ref v (- i 1)) (vector-ref v m))  (- i 1) 
+                          m))))))
 
 ;; Asserts whether the given argument is a valid heap or not
 ;; Commentary:

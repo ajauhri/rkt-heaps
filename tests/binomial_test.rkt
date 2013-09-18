@@ -20,16 +20,8 @@
       (check-false (findmin (cons (cons (vector 1 2) 2) #f))))
 
     (test-case
-      "Checking insert with invalid heap"
-      (check-false (insert (cons (cons (list 1 2 3) 3) 0) 1)))
-
-    (test-case
       "Checking insert with valid heap"
       (check-true (equal? (insert (makeheap 1) 2) (meld (makeheap 1) (makeheap 2)))))
-
-    (test-case
-      "Checking deletemin with wrong min value"
-      (check-false (deletemin (cons (cons (vector 2 3 4) 3) 3))))
 
     (test-case 
       "checking deletemin with 2^n elements & since there are only 2 elements, the resultant sub-heap will be empty"
