@@ -17,9 +17,8 @@
 ;; Commentary:
 ;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make findmin a constant time operation, the min is stored as the `cdr` of another pair.
 (define (makeheap val)
-  (if (not (number? val)) 
-    (raise-argument-error 'makeheap "number?" val)
-    (cons (cons (make-vector 1 val) 1) val)))
+  (cond ((not (number? val)) (raise-argument-error 'makeheap "number?" val))
+        (else (cons (cons (vector val) 1) val))))
 
 ;; Returns the min element in the heap
 ;; Commentary: 
