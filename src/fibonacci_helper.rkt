@@ -1,12 +1,12 @@
 #lang racket
 
 (require racket/mpair)
-(provide make-node get-roots get-node-vector get-value heap? heaps? get-min-index)
+(provide make-node get-root-vector get-node-vector get-value heap? heaps? get-min-index)
 
 (define (make-node val)
   (vector #f val #f (vector)))
 
-(define (get-roots h)
+(define (get-root-vector h)
   (mcdr h))
 
 (define (get-node-vector h)

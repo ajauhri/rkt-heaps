@@ -8,11 +8,10 @@
 
     (test-case
       "Checking insert"
-      (check-true (heaps? (insert (makeheap 1) 2))))
+      (check-true (heap? (insert (makeheap 1) 2))))
 
     (test-case
       "Checking heaps? and heap? works fine"
-      (check-true (heaps? (makeheap 1))) 
-      (check-false (heap? (cons (cons (vector #f 1 1) 2) 0)))
-      (check-true (heaps? (makeheap 1) (makeheap 2) (makeheap 3))))))
+      (check-true (heap-lazy? (cons (cons (vector 1 1) 2) #f))) 
+      (check-false (heap? (cons (cons (vector #f 1 1) 2) 0))))))
 
