@@ -9,7 +9,7 @@
 ;; delete
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert deletemin meld heap? heap-roots heap-minind)
+(provide makeheap findmin insert deletemin meld heap? heap-roots heap-minind heap-size)
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))
@@ -17,16 +17,17 @@
 
 (define (findmin h)
   (cond ((not (heap? h)) (raise-argument-error 'findmin "heap?" h))
+        ((= (heap-size h) 0) (raise-type-error 'findmin "node" (heap-minind h)))
         (else (node-val (heap-minind h)))))
 
 (define (insert h val)
   (cond ((not (heap? h)) (raise-argument-error 'insert! "heap?" 0 h val))
-        ((not (number? val)) (raise-argument-error 'insert! "number?" 1 h val))
         (else
           (meld h (makeheap val)))))
 
 (define (deletemin h)
   (cond ((not (heap? h)) (raise-argument-error 'deletemin "heap?" h))
+        ((= (heap-size h) 0) (raise-type-error 'deletemin "node" (heap-minind h)))
         (else 
           (let* ((maxrnk (inexact->exact (ceiling (/ (log (heap-size h)) (log 2)))))
 
@@ -35,9 +36,9 @@
                  (oldrts (heap-roots h)))
 
             ; combine other roots into the ^root vector 
-            (for ([i (in-range (vector-length oldrts))])
-                 (let ((ithrankvec1 (vector-ref oldrts i))
-                       (ithrankvec2 (vector-ref newrts i)))
+            (for ([i (in-range (vector-length newrts))])
+                 (let ((ithrankvec1 (vec-ref oldrts i))
+                       (ithrankvec2 (vec-ref newrts i)))
                    (vector-set! newrts i (vector-append ithrankvec1 ithrankvec2))))
 
             ; certain no two roots of same rank in the rank vector, & also remove min root
@@ -47,9 +48,11 @@
                   (when (> (vector-length ithrankvec) 1) (correct-rts-vec! newrts i minnode))))
 
             ; find min
-            (let ((min (for/fold ([m (vector-ref (vector-ref newrts 0) 0)])
-                                 ([i (in-vector (vector-drop newrts 1))])
-                                 (values (if (< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0) m)))))
+            (let ((min (for/fold ([m #f])
+                                 ([i (in-vector newrts)])
+                                 (values (cond ((and (node? m) (> (vector-length i) 0)) 
+                                                (if (< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0) m))
+                                               ((> (vector-length i) 0) (vector-ref i 0)))))))
               (heap min newrts (- (heap-size h) 1)))))))
 
 (define (meld h1 h2)
