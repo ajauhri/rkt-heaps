@@ -2,7 +2,7 @@
 
 (provide create-rts-vec correct-rts-vec! vec-ref (struct-out heap) (struct-out node))
 
-(struct heap (minind roots size))
+(struct heap (minref roots size))
 (struct node (val parent children marked) #:mutable)
  
 (define (create-rts-vec nodevec maxrnk)
