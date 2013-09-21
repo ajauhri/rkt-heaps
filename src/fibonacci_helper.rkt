@@ -1,34 +1,36 @@
 #lang racket
 
-(provide make-node get-root-vector get-node-vector get-value get-min-index heap? make-root-vector)
+(provide create-rts-vec correct-rts-vec! (struct-out heap) (struct-out node))
 
-(define (make-node val)
-  (vector #f val #f (vector)))
+(struct heap (minind roots size))
+(struct node (val parent children marked) #:mutable)
+ 
+(define (create-rts-vec nodevec maxrnk)
+  (cond ((<= maxrnk 0) (raise-argument-error 'create-rts-vec "(<=maxrnk 0)" maxrnk))
+        (else (let  ((res (make-vector maxrnk #())))
+               (for ([i (in-range (vector-length nodevec))])
+                    (let* ((node (vector-ref nodevec i))
+                           (noderank (vector-length (node-children node))))
+                      (vector-set! res noderank 
+                                   (vector-append (vector-ref res noderank) (vector node)))))
+               res))))
 
-(define (get-root-vector h)
-  (cdr h))
 
-(define (get-node-vector h)
-  (car (car h)))
+(define (correct-rts-vec! rts i minnode)
+  (cond ((<= (vector-length (vector-ref rts i)) 1) '())
+        (else (let* ((subelems (vector-take (vector-ref rts i) 2))
+                     (node1 (vector-ref subelems 0))
+                     (node2 (vector-ref subelems 1))
+                     (foo (vector-set! rts i (vector-drop (vector-ref rts i) 2))))
+                (cond ((eq? node1 minnode) (vector-set! rts i (vector-append (vector node2) (vector-ref rts i))))
+                      ((eq? node2 minnode) (vector-set! rts i (vector-append (vector node1) (vector-ref rts i))))
+                      ((<= (node-val node1) (node-val node2))
+                       (set-node-parent! node2 node1)
+                       (set-node-children! node1 (vector-append (node-children node1) (vector node2)))
+                       (vector-set! rts (+ i 1) (vector-append (vector-ref rts (+ i 1) (vector node1)))))
+                      ((> (node-val node1) (node-val node2))
+                       (set-node-parent! node2 node1)
+                       (set-node-children! node1 (vector-append (node-children node2) (vector node1)))
+                       (vector-set! rts (+ i 1) (vector-append (vector-ref rts (+ i 1) (vector node2))))))
+                (correct-rts-vec! rts i minnode)))))
 
-(define (get-value n)
-  (vector-ref n 1))
-
-(define (get-min-index h)
-  (cdr (car h)))
-
-(define (heap? h) #t)
-
-(define (make-root-vector h1 h2 )
-  (let ((rootvech1 (get-root-vector h1))
-        (rootvech2 (get-root-vector h2))
-        (sizeh1 (vector-length (get-node-vector h1))))
-    (vector-append (for/vector ([i (in-vector rootvech1)]
-                                [j (in-vector rootvech2)])
-                               (vector-append i (vector-map (lambda (val) (+ val sizeh1)) j)))
-                   (cond ((< (vector-length rootvech1) (vector-length rootvech2))
-                          (for/vector ([i (in-vector (vector-take-right rootvech2 (vector-length rootvech1)))])
-                                      (vector-map (lambda (val) (+ val sizeh1)) i)))
-                         ((> (vector-length rootvech1) (vector-length rootvech2))
-                          (vector-take-right rootvech1 (vector-length rootvech2)))
-                         (else #())))))

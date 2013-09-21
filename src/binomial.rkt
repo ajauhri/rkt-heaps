@@ -44,7 +44,7 @@
                      (tree-start (+ 1 min-index))
                      (tree-end (+ 1 (* min-index 2)))
                      (tree (vector-copy orig-vec tree-start tree-end)))
-                (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f))
+                (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f))  ; put #f in place of the tree rooted at min
                 (cond ((= count 1) (cons (cons #() 0) #f))
                       (else (meld (cons (cons orig-vec (- count (+ min-index 1))) 
                                         (vec-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f)))
