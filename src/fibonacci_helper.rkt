@@ -1,17 +1,18 @@
 #lang racket
 
-(provide create-rts-vec correct-rts-vec! vec-ref (struct-out heap) (struct-out node))
+(provide create-children-rts-vec correct-rts-vec! vec-ref (struct-out heap) (struct-out node))
 
-(struct heap (minref roots size))
+(struct heap (minref roots size) #:mutable)
 (struct node (val parent children marked) #:mutable)
  
-(define (create-rts-vec nodevec maxrnk)
+(define (create-children-rts-vec nodevec maxrnk)
   (cond ((not (exact-nonnegative-integer? maxrnk)) (raise-argument-error 'create-rts-vec "exact" maxrnk))
         ((= maxrnk 0) #())
         (else (let  ((res (make-vector maxrnk #())))
                (for ([i (in-range (vector-length nodevec))])
                     (let* ((node (vector-ref nodevec i))
                            (noderank (vector-length (node-children node))))
+                      (set-node-parent! node #f)
                       (vector-set! res noderank 
                                    (vector-append (vector-ref res noderank) (vector node)))))
                res))))
@@ -34,6 +35,17 @@
                        (set-node-children! node2 (vector-append (node-children node2) (vector node1)))
                        (vector-set! rts (+ i 1) (vector-append (vector-ref rts (+ i 1)) (vector node2)))))
                 (correct-rts-vec! rts i minnode)))))
+
+(define (check-parents! h parent child)
+  ((cond ((eq? parent #f) (void))
+         ((not (node-marked parent))
+          (set-node-children! parent (for/vector ([i (in-vector (node-children parent))]) (if (eq? i child) #() i)))
+          (set-node-marked! parent #t))
+         ((node-marked parent)
+          (let ((parentrnk (vector-length (node-children parent))))
+           (set-node-marked! parent #f)
+           (vector-set! (heap-roots h) parentrnk (vector-append (vector-ref (heap-roots h) parentrnk) (vector parent)))
+           (check-parents! h (node-parent parent)))))))
 
 (define (vec-ref vec pos)
   (cond ((<= (vector-length vec) pos) #())

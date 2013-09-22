@@ -9,7 +9,7 @@
 ;; delete
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert deletemin! meld heap? heap-roots heap-minref heap-size)
+(provide makeheap findmin insert deletemin! meld decrement! (struct-out heap) (struct-out node))
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))
@@ -36,7 +36,7 @@
           (let* ((maxrnk (inexact->exact (ceiling (/ (log (heap-size h)) (log 2)))))
 
                  ; put children of min into a root vector
-                 (newrts (create-rts-vec (node-children (heap-minref h)) maxrnk))
+                 (newrts (create-children-rts-vec (node-children (heap-minref h)) maxrnk))
                  (oldrts (heap-roots h)))
 
             ; combine other roots into the ^root vector 
@@ -78,8 +78,20 @@
             (heap minref rts (+ (heap-size h1) (heap-size h2)))))))
 
 
-(define (decrement h noderef delta)
+(define (decrement! h noderef delta)
   (cond ((not (heap? h)) (raise-argument-error 'decrement "heap?" 0 h noderef delta))
         ((not (node? noderef)) (raise-argument-error 'decrement "node?" 1 h noderef delta))
         ((not (number? delta)) (raise-argument-error 'decrement "number?" 2 h noderef delta))
-        (else #t)))
+        (else (set-node-val! noderef (- (node-val noderef) delta))
+              (when (< (node-val noderef) (findmin h)) (set-heap-minref! h noderef))
+              (cond ((not (eq? (node-parent noderef) #f)) 
+                     
+                     ; heap property violated
+                     (cond ((< (node-val noderef) (node-val (node-parent noderef)))
+                            (let ((nodernk (vector-length (node-children noderef)))
+                                  (parent (node-parent noderef)))
+                              (set-node-parent! noderef #f)
+                              (set-node-marked! noderef #f)
+                              (vector-set! (heap-roots h) nodernk (vector-append (vector-ref (heap-roots h) nodernk) (vector noderef)))
+                              (check-parents! h parent noderef)
+                              (void)))))))))
