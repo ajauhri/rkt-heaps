@@ -1,5 +1,5 @@
 #lang racket
-;; Core functions that implement Binomial heaps. Invented by J. Vuillemin in 1978. They are a special case of Fibonacci heaps. Core functions and cost are as follows:
+;; Core functions that implement Binomial heaps. Developed by J. Vuillemin in 1978. They are a special case of Fibonacci heaps. Core functions and amortized costs are as follows:
 ;; makeheap     - O(1)
 ;; findmin      - O(1) 
 ;; insert       - O(1) 

@@ -1,15 +1,16 @@
 #lang racket 
-;; Book-keeper fof the functions to be implemented 
-;; makeheap
-;; findmin
-;; insert
-;; deletemin
-;; meld
-;; decrement
-;; delete
+;; Core functions that implement Fibonacci heaps. Developed by Michael L. Fredman and Robert E. Tarjan in 1984. Core functions and amortized costs are as follows:
+;; makeheap     - O(1) 
+;; findmin      - O(1)
+;; insert       - O(1)
+;; deletemin    - O(log n)
+;; meld         - O(1)
+;; decrement    - O(1)
+;; delete       - O(log n)
+
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert deletemin meld decrement! (struct-out heap) (struct-out node))
+(provide makeheap findmin insert deletemin! meld decrement! (struct-out heap) (struct-out node))
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))
@@ -26,12 +27,14 @@
         (else
           (meld h (makeheap val)))))
 
-; Commentary:
-; - this procedure is a mutator since it changes the node->parent & node->children of the previously defined nodes in the heap
-; - does not edit the heap structure passed as an argument
-(define (deletemin h)
-  (cond ((not (heap? h)) (raise-argument-error 'deletemin "heap?" h))
-        ((= (heap-size h) 0) (raise-type-error 'deletemin "node" (heap-minref h)))
+;; Returns nothing. Modifies the heap provided and its nodes
+;; Commentary:
+;; - this procedure mutates node->parent & node->children of the previously defined nodes in the heap
+;; - since deletemin is the only time root vectors are properly sorted as per their rank, we create a vector of size (log n) such that all nodes 
+;;   (after finding the unique w.r.t. rank) are put in the right slot of the rank vector
+(define (deletemin! h)
+  (cond ((not (heap? h)) (raise-argument-error 'deletemin! "heap?" h))
+        ((= (heap-size h) 0) (raise-type-error 'deletemin! "node" (heap-minref h)))
         (else 
           (let* ((maxrnk (inexact->exact (ceiling (/ (log (heap-size h)) (log 2)))))
 
@@ -39,7 +42,7 @@
                  (newrts (create-children-rts-vec (node-children (heap-minref h)) maxrnk))
                  (oldrts (heap-roots h)))
 
-            ; combine other roots into the ^root vector 
+            ; combine other roots into the ^new root vector 
             (for ([i (in-range (vector-length newrts))])
                  (let ((ithrankvec1 (vec-ref oldrts i))
                        (ithrankvec2 (vec-ref newrts i)))
@@ -57,9 +60,11 @@
                                     (values (cond ((and (node? m) (> (vector-length i) 0)) 
                                                    (if (< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0) m))
                                                   ((> (vector-length i) 0) (vector-ref i 0)))))))
-              (heap minref newrts (- (heap-size h) 1)))))))
+              (set! h (heap minref newrts (- (heap-size h) 1))))))))
 
-
+;; Returns a new heap after joining two heaps
+;; Commentary:
+;; - Doesn't change any nodes or any data of the heap provided as arguments
 (define (meld h1 h2)
   (cond ((not (heap? h1)) (raise-argument-error 'meld "heap?" 0 h1 h2))
         ((not (heap? h2)) (raise-argument-error 'meld "heap?" 1 h1 h2))
@@ -77,14 +82,16 @@
                           (heap-minref h1))))
             (heap minref rts (+ (heap-size h1) (heap-size h2)))))))
 
-
+;; Returns void.
+;; Commentary:
+;; - modifies the roots and min, if needed, of the heap argument 
 (define (decrement! h noderef delta)
   (cond ((not (heap? h)) (raise-argument-error 'decrement "heap?" 0 h noderef delta))
         ((not (node? noderef)) (raise-argument-error 'decrement "node?" 1 h noderef delta))
         ((not (number? delta)) (raise-argument-error 'decrement "number?" 2 h noderef delta))
         (else (set-node-val! noderef (- (node-val noderef) delta))
               (when (< (node-val noderef) (findmin h)) (set-heap-minref! h noderef))
-              
+
               ; heap condition violated
               (cond ((and (not (eq? (node-parent noderef) #f)) (< (node-val noderef) (node-val (node-parent noderef))))
                      (let ((nodernk (vector-length (node-children noderef)))
@@ -94,25 +101,33 @@
                        (vector-set! (heap-roots h) nodernk (vector-append (vector-ref (heap-roots h) nodernk) (vector noderef)))
                        (check-parents! h parent noderef))))))) 
 
+;; Modifies the heap roots and other nodes of the forest (remove noderef from a node's 
 (define (delete! h noderef)
   (cond ((not (heap? h))) (raise-argument-error 'delete! "heap?" 0 h noderef)
         ((not (node? noderef)) (raise-argument-error 'delete! "node?" 1 h noderef))
-        
-        ; add all children nodes of the node to be deleted
-        (else (for ([i (in-vector (node-children noderef))])
-                   (let* ((noderank (vector-length (node-children i))))
-                    (vector-set! (heap-roots h) noderank 
-                                 (vector-append (vector-ref (heap-roots h) noderank) (vector i)))))
-              
-              ; if node to be deleted is the min node 
-              (cond ((eq? noderef (heap-minref h)) (deletemin h)))
-             
-              ; if parent does not exist, remove the node from set of roots
-              (cond ((eq? #f (node-parent noderef))
-                     (vector-set! (heap-roots h) (vector-length (node-children noderef)) 
-                                  (for/vector ([i (in-vector (vector-ref (heap-roots h) (vector-length (node-children noderef))))]) 
-                                              (if (eq? i noderef) #() i))))
-                    
-                    ; if parent exists, recursively remove parents if marked 
-                    ((not (eq? #f (node-parent noderef))) 
-                     (check-parents! h (node-parent noderef) noderef))))))
+
+        ;if noderef to be deleted is the min node itself 
+        (else (cond ((eq? noderef (heap-minref h)) (deletemin! h))
+                   
+                    ; add all child nodes of the noderef to be deleted to heap's roots vector
+                    (else (set-heap-size! h (- (heap-size h) 1)) 
+                          (for ([n (in-vector (node-children noderef))])
+                               (let* ((noderank (vector-length (node-children n))))
+                                (set-node-parent! n #f)
+                                (vector-set! (heap-roots h) noderank 
+                                             (vector-append (vector-ref (heap-roots h) noderank) (vector n)))))
+
+                          ; if parent does not exist for noderef, noderef exists in the vector of root nodes 
+                          (cond  ((eq? #f (node-parent noderef))
+                                  (vector-set! (heap-roots h) (vector-length (node-children noderef)) 
+                                               (for/vector ([i (in-vector (vector-ref (heap-roots h) (vector-length (node-children noderef))))]) 
+                                                           (if (eq? i noderef) #() i))))
+
+                                 ; if parent exists, recursively remove parents if marked 
+                                 ((not (eq? #f (node-parent noderef))) 
+                                  (check-parents! h (node-parent noderef) noderef)))))
+
+              ; mark for GC, although not sure whether this is correct way to do in Racket [ref: http://osdir.com/ml/users/2010-09/msg08622.html]
+              (set! noderef #f))))
+
+

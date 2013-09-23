@@ -17,9 +17,8 @@
                                    (vector-append (vector-ref res noderank) (vector node)))))
                res))))
 
-
 (define (correct-rts-vec! rts i minnode)
-  (cond ((<= (vector-length (vector-ref rts i)) 1) '())
+  (cond ((<= (vector-length (vector-ref rts i)) 1) (void))
         (else (let* ((subelems (vector-take (vector-ref rts i) 2))
                      (node1 (vector-ref subelems 0))
                      (node2 (vector-ref subelems 1))
