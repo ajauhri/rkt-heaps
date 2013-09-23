@@ -1,6 +1,6 @@
 #lang racket
 
-(provide create-children-rts-vec correct-rts-vec! vec-ref (struct-out heap) (struct-out node))
+(provide create-children-rts-vec correct-rts-vec! vec-ref (struct-out heap) (struct-out node) check-parents!)
 
 (struct heap (minref roots size) #:mutable)
 (struct node (val parent children marked) #:mutable)
@@ -37,15 +37,16 @@
                 (correct-rts-vec! rts i minnode)))))
 
 (define (check-parents! h parent child)
-  ((cond ((eq? parent #f) (void))
+  (cond ((eq? parent #f) (void))
          ((not (node-marked parent))
           (set-node-children! parent (for/vector ([i (in-vector (node-children parent))]) (if (eq? i child) #() i)))
           (set-node-marked! parent #t))
          ((node-marked parent)
           (let ((parentrnk (vector-length (node-children parent))))
+           (set-node-children! parent (for/vector ([i (in-vector (node-children parent))]) (if (eq? i child) #() i)))
            (set-node-marked! parent #f)
            (vector-set! (heap-roots h) parentrnk (vector-append (vector-ref (heap-roots h) parentrnk) (vector parent)))
-           (check-parents! h (node-parent parent)))))))
+           (check-parents! h (node-parent parent))))))
 
 (define (vec-ref vec pos)
   (cond ((<= (vector-length vec) pos) #())

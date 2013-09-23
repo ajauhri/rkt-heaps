@@ -9,7 +9,7 @@
 ;; delete
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert deletemin! meld decrement! (struct-out heap) (struct-out node))
+(provide makeheap findmin insert deletemin meld decrement! (struct-out heap) (struct-out node))
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))
@@ -29,7 +29,7 @@
 ; Commentary:
 ; - this procedure is a mutator since it changes the node->parent & node->children of the previously defined nodes in the heap
 ; - does not edit the heap structure passed as an argument
-(define (deletemin! h)
+(define (deletemin h)
   (cond ((not (heap? h)) (raise-argument-error 'deletemin "heap?" h))
         ((= (heap-size h) 0) (raise-type-error 'deletemin "node" (heap-minref h)))
         (else 
@@ -84,14 +84,24 @@
         ((not (number? delta)) (raise-argument-error 'decrement "number?" 2 h noderef delta))
         (else (set-node-val! noderef (- (node-val noderef) delta))
               (when (< (node-val noderef) (findmin h)) (set-heap-minref! h noderef))
-              (cond ((not (eq? (node-parent noderef) #f)) 
-                     
-                     ; heap property violated
-                     (cond ((< (node-val noderef) (node-val (node-parent noderef)))
-                            (let ((nodernk (vector-length (node-children noderef)))
-                                  (parent (node-parent noderef)))
-                              (set-node-parent! noderef #f)
-                              (set-node-marked! noderef #f)
-                              (vector-set! (heap-roots h) nodernk (vector-append (vector-ref (heap-roots h) nodernk) (vector noderef)))
-                              (check-parents! h parent noderef)
-                              (void)))))))))
+              (cond ((and (not (eq? (node-parent noderef) #f)) (< (node-val noderef) (node-val (node-parent noderef))))
+                     (let ((nodernk (vector-length (node-children noderef)))
+                           (parent (node-parent noderef)))
+                       (set-node-parent! noderef #f)
+                       (set-node-marked! noderef #f)
+                       (vector-set! (heap-roots h) nodernk (vector-append (vector-ref (heap-roots h) nodernk) (vector noderef)))
+                       (check-parents! h parent noderef))))))) 
+
+(define (delete! h noderef)
+  (cond ((not (heap? h))) (raise-argument-error 'delete! "heap?" 0 h noderef)
+        ((not (node? noderef)) (raise-argument-error 'delete! "node?" 1 h noderef))
+        (else (for ([i (in-vector (node-children noderef))])
+                   (let* ((noderank (vector-length (node-children i))))
+                    (vector-set! (heap-roots h) noderank 
+                                 (vector-append (vector-ref (heap-roots h) noderank) (vector i)))))
+              (check-parents! h (node-parent noderef) noderef)
+              (cond ((eq? #f (node-parent noderef))
+                     (vector-set! (heap-roots h) (vector-length (node-children noderef)) (for/vector ([i in (in-vector (vector-ref (heap-roots h) (vector-length (node-children noderef))))]) (if (eq? i noderef) #() i))))
+                    ((not (eq? #f (node-parent noderef))) (check-parents! h ))
+                    )
+              )))
