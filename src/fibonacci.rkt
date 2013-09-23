@@ -84,6 +84,8 @@
         ((not (number? delta)) (raise-argument-error 'decrement "number?" 2 h noderef delta))
         (else (set-node-val! noderef (- (node-val noderef) delta))
               (when (< (node-val noderef) (findmin h)) (set-heap-minref! h noderef))
+              
+              ; heap condition violated
               (cond ((and (not (eq? (node-parent noderef) #f)) (< (node-val noderef) (node-val (node-parent noderef))))
                      (let ((nodernk (vector-length (node-children noderef)))
                            (parent (node-parent noderef)))
@@ -95,13 +97,22 @@
 (define (delete! h noderef)
   (cond ((not (heap? h))) (raise-argument-error 'delete! "heap?" 0 h noderef)
         ((not (node? noderef)) (raise-argument-error 'delete! "node?" 1 h noderef))
+        
+        ; add all children nodes of the node to be deleted
         (else (for ([i (in-vector (node-children noderef))])
                    (let* ((noderank (vector-length (node-children i))))
                     (vector-set! (heap-roots h) noderank 
                                  (vector-append (vector-ref (heap-roots h) noderank) (vector i)))))
-              (check-parents! h (node-parent noderef) noderef)
+              
+              ; if node to be deleted is the min node 
+              (cond ((eq? noderef (heap-minref h)) (deletemin h)))
+             
+              ; if parent does not exist, remove the node from set of roots
               (cond ((eq? #f (node-parent noderef))
-                     (vector-set! (heap-roots h) (vector-length (node-children noderef)) (for/vector ([i in (in-vector (vector-ref (heap-roots h) (vector-length (node-children noderef))))]) (if (eq? i noderef) #() i))))
-                    ((not (eq? #f (node-parent noderef))) (check-parents! h ))
-                    )
-              )))
+                     (vector-set! (heap-roots h) (vector-length (node-children noderef)) 
+                                  (for/vector ([i (in-vector (vector-ref (heap-roots h) (vector-length (node-children noderef))))]) 
+                                              (if (eq? i noderef) #() i))))
+                    
+                    ; if parent exists, recursively remove parents if marked 
+                    ((not (eq? #f (node-parent noderef))) 
+                     (check-parents! h (node-parent noderef) noderef))))))
