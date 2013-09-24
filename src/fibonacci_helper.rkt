@@ -36,14 +36,20 @@
 (define (check-parents! h parent child)
   (cond ((eq? parent #f) (void))
          ((not (node-marked parent))
-          (set-node-children! parent (for/vector ([i (in-vector (node-children parent))]) (if (eq? i child) #() i)))
-          (set-node-marked! parent #t))
+          (set-node-children! parent (remove-node (node-children parent) child))
+          (when (not (eq? #f (node-parent parent))) (set-node-marked! parent #t)))
          ((node-marked parent)
           (let ((parentrnk (vector-length (node-children parent))))
-           (set-node-children! parent (for/vector ([i (in-vector (node-children parent))]) (if (eq? i child) #() i)))
+           (set-node-children! parent (remove-node (node-children parent) child))
            (set-node-marked! parent #f)
            (vector-set! (heap-roots h) parentrnk (vector-append (vector-ref (heap-roots h) parentrnk) (vector parent)))
            (check-parents! h (node-parent parent))))))
+
+(define (remove-node nodevec noderef)
+  (for/fold ([res #()])
+            ([n (in-vector nodevec)])
+            (if (eq? n noderef) res
+              (vector-append res (vector n)))))
 
 (define (vec-ref vec pos)
   (cond ((<= (vector-length vec) pos) #())
