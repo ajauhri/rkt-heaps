@@ -10,7 +10,7 @@
 
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert deletemin! meld decrement! (struct-out heap) (struct-out node))
+(provide makeheap findmin insert! deletemin! meld decrement! delete! (struct-out heap) (struct-out node))
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))
@@ -21,11 +21,13 @@
         ((= (heap-size h) 0) (raise-type-error 'findmin "node" (heap-minref h)))
         (else (node-val (heap-minref h)))))
 
-(define (insert h val)
+(define (insert! h val)
   (cond ((not (heap? h)) (raise-argument-error 'insert "heap?" 0 h val))
         ((not (number? val)) (raise-argument-error 'insert "number?" 1 h val))
-        (else
-          (meld h (makeheap val)))))
+        (else (let ((n (node val #f #() #f)))
+               (vector-set! (heap-roots h) 0 (vector-append (vector-ref (heap-roots h) 0) (vector n)))
+               (set-heap-size! h (+ (heap-size h) 1))
+               (when (< val (findmin h)) (set-heap-minref! h n))))))
 
 ;; Returns nothing. Modifies the heap provided and its nodes
 ;; Commentary:
@@ -36,7 +38,7 @@
   (cond ((not (heap? h)) (raise-argument-error 'deletemin! "heap?" h))
         ((= (heap-size h) 0) (raise-type-error 'deletemin! "node" (heap-minref h)))
         (else 
-          (let* ((maxrnk (inexact->exact (ceiling (/ (log (heap-size h)) (log 2)))))
+          (let* ((maxrnk (+ 1 (inexact->exact (ceiling (/ (log (heap-size h)) (log 2))))))
 
                  ; put children of min into a root vector
                  (newrts (create-children-rts-vec (node-children (heap-minref h)) maxrnk))
@@ -47,20 +49,31 @@
                  (let ((ithrankvec1 (vec-ref oldrts i))
                        (ithrankvec2 (vec-ref newrts i)))
                    (vector-set! newrts i (vector-append ithrankvec1 ithrankvec2))))
+            
+            ; remove min node from newrts
+            (let ((minrank (vector-length (node-children (heap-minref h))))
+                  (minref (heap-minref h)))
+             (vector-set! newrts minrank 
+                          (for/fold ([res #()])
+                                    ([n (in-vector (vector-ref newrts minrank))])
+                                      (if (eq? n minref) res 
+                                        (vector-append res (vector n))))))
 
-            ; certain no two roots of same rank in the rank vector, & also remove min root
+            ; certain no two roots of same rank in the rank vector
             (for ([i (in-range (vector-length newrts))])
-                 (let ((ithrankvec (vector-ref newrts i))
-                       (minnode (heap-minref h)))
-                   (when (> (vector-length ithrankvec) 1) (correct-rts-vec! newrts i minnode))))
+                 (let ((ithrankvec (vector-ref newrts i)))
+                   (when (> (vector-length ithrankvec) 1) (correct-rts-vec! newrts i))))
 
             ; find min
             (let ((minref (for/fold ([m #f])
                                     ([i (in-vector newrts)])
-                                    (values (cond ((and (node? m) (> (vector-length i) 0)) 
-                                                   (if (< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0) m))
-                                                  ((> (vector-length i) 0) (vector-ref i 0)))))))
-              (set! h (heap minref newrts (- (heap-size h) 1))))))))
+                                    (values (cond ((> (vector-length i) 0) 
+                                                   (cond ((not (node? m)) (vector-ref i 0))
+                                                         ((< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0))))
+                                                  (else m))))))
+              (set-heap-minref! h minref)
+              (set-heap-roots! h newrts)
+              (set-heap-size! h (- (heap-size h) 1)))))))
 
 ;; Returns a new heap after joining two heaps
 ;; Commentary:
@@ -103,7 +116,7 @@
 
 ;; Modifies the heap roots and other nodes of the forest (remove noderef from a node's 
 (define (delete! h noderef)
-  (cond ((not (heap? h))) (raise-argument-error 'delete! "heap?" 0 h noderef)
+  (cond ((not (heap? h)) (raise-argument-error 'delete! "heap?" 0 h noderef))
         ((not (node? noderef)) (raise-argument-error 'delete! "node?" 1 h noderef))
 
         ;if noderef to be deleted is the min node itself 
@@ -117,11 +130,14 @@
                                 (vector-set! (heap-roots h) noderank 
                                              (vector-append (vector-ref (heap-roots h) noderank) (vector n)))))
 
-                          ; if parent does not exist for noderef, noderef exists in the vector of root nodes 
+                          ; if parent does not exist for noderef, noderef exists in the vector of root nodes, so delete!
                           (cond  ((eq? #f (node-parent noderef))
-                                  (vector-set! (heap-roots h) (vector-length (node-children noderef)) 
-                                               (for/vector ([i (in-vector (vector-ref (heap-roots h) (vector-length (node-children noderef))))]) 
-                                                           (if (eq? i noderef) #() i))))
+                                  (let ((noderank (vector-length (node-children noderef))))
+                                   (vector-set! (heap-roots h) noderank 
+                                                (for/fold ([res #()])
+                                                          ([n (in-vector (vector-ref (heap-roots h) noderank))])
+                                                          (if (eq? n noderef) res
+                                                            (vector-append res (vector n)))))))
 
                                  ; if parent exists, recursively remove parents if marked 
                                  ((not (eq? #f (node-parent noderef))) 
@@ -129,5 +145,3 @@
 
               ; mark for GC, although not sure whether this is correct way to do in Racket [ref: http://osdir.com/ml/users/2010-09/msg08622.html]
               (set! noderef #f))))
-
-
