@@ -114,34 +114,19 @@
                        (vector-set! (heap-roots h) nodernk (vector-append (vector-ref (heap-roots h) nodernk) (vector noderef)))
                        (check-parents! h parent noderef))))))) 
 
-;; Modifies the heap roots and other nodes of the forest (remove noderef from a node's 
+;; Decrements noderef's value below the min of the heap, and calls deletemin
 (define (delete! h noderef)
   (cond ((not (heap? h)) (raise-argument-error 'delete! "heap?" 0 h noderef))
         ((not (node? noderef)) (raise-argument-error 'delete! "node?" 1 h noderef))
 
         ;if noderef to be deleted is the min node itself 
         (else (cond ((eq? noderef (heap-minref h)) (deletemin! h))
-                   
-                    ; add all child nodes of the noderef to be deleted to heap's roots vector
-                    (else (set-heap-size! h (- (heap-size h) 1)) 
-                          (for ([n (in-vector (node-children noderef))])
-                               (let* ((noderank (vector-length (node-children n))))
-                                (set-node-parent! n #f)
-                                (vector-set! (heap-roots h) noderank 
-                                             (vector-append (vector-ref (heap-roots h) noderank) (vector n)))))
-
-                          ; if parent does not exist for noderef, noderef exists in the vector of root nodes, so delete!
-                          (cond  ((eq? #f (node-parent noderef))
-                                  (let ((noderank (vector-length (node-children noderef))))
-                                   (vector-set! (heap-roots h) noderank 
-                                                (for/fold ([res #()])
-                                                          ([n (in-vector (vector-ref (heap-roots h) noderank))])
-                                                          (if (eq? n noderef) res
-                                                            (vector-append res (vector n)))))))
-
-                                 ; if parent exists, recursively remove parents if marked 
-                                 ((not (eq? #f (node-parent noderef))) 
-                                  (check-parents! h (node-parent noderef) noderef)))))
-
-              ; mark for GC, although not sure whether this is correct way to do in Racket [ref: http://osdir.com/ml/users/2010-09/msg08622.html]
-              (set! noderef #f))))
+                    
+                    ; delta := n - (m - 1)
+                    ; m=0; n=1; delta=2
+                    ; m=-1; n=0; delta=2
+                    ; m=0; n=0; delta=1
+                    ; m=-4; n=-3; delta=2, works!!!
+                    (else (let ((delta (- (node-val noderef) (- (findmin h) 1))))
+                           (decrement! h noderef delta)
+                           (deletemin! h)))))))
