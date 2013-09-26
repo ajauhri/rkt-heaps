@@ -22,12 +22,13 @@
         (else (node-val (heap-minref h)))))
 
 (define (insert! h val)
-  (cond ((not (heap? h)) (raise-argument-error 'insert "heap?" 0 h val))
-        ((not (number? val)) (raise-argument-error 'insert "number?" 1 h val))
+  (cond ((not (heap? h)) (raise-argument-error 'insert! "heap?" 0 h val))
+        ((not (number? val)) (raise-argument-error 'insert! "number?" 1 h val))
         (else (let ((n (node val #f #() #f)))
+               (when (= 0 (heap-size h)) (set-heap-minref! h n))
                (vector-set! (heap-roots h) 0 (vector-append (vector-ref (heap-roots h) 0) (vector n)))
                (set-heap-size! h (+ (heap-size h) 1))
-               (when (< val (findmin h)) (set-heap-minref! h n))))))
+               (when (and (> (heap-size h) 0) (< val (findmin h))) (set-heap-minref! h n))))))
 
 ;; Returns nothing. Modifies the heap provided and its nodes
 ;; Commentary:
@@ -100,9 +101,9 @@
 ;; Commentary:
 ;; - modifies the roots and min, if needed, of the heap argument 
 (define (decrement! h noderef delta)
-  (cond ((not (heap? h)) (raise-argument-error 'decrement "heap?" 0 h noderef delta))
-        ((not (node? noderef)) (raise-argument-error 'decrement "node?" 1 h noderef delta))
-        ((not (number? delta)) (raise-argument-error 'decrement "number?" 2 h noderef delta))
+  (cond ((not (heap? h)) (raise-argument-error 'decrement! "heap?" 0 h noderef delta))
+        ((not (node? noderef)) (raise-argument-error 'decrement! "node?" 1 h noderef delta))
+        ((not (number? delta)) (raise-argument-error 'decrement! "number?" 2 h noderef delta))
         (else (set-node-val! noderef (- (node-val noderef) delta))
               (when (< (node-val noderef) (findmin h)) (set-heap-minref! h noderef))
 
