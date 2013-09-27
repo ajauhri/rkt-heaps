@@ -1,8 +1,10 @@
+#! /usr/bin/env racket
 #lang racket
-(require plot data/heap)
-(plot-new-window? #t)
+(require plot data/heap racket/cmdline)
 
 (provide plot-graphs)
+
+(plot-new-window? #t)
 
 (define R 4294967087)
 
@@ -58,3 +60,8 @@
           (lines (get-plot-data time-heap-add! ssize esize step freq) #:color 3 #:label "heap-add!") 
           (lines (get-plot-data time-heap-add-all! ssize esize step freq) #:color 0 #:label "heap-add-all!")) 
         #:x-label "n" #:y-label "Average time (ms)" #:out-file (format "binary_~a_~a_~a_~a" ssize esize step freq) #:out-kind 'png))
+
+(command-line 
+  #:args
+  (ssize esize step freq) (plot-graphs (string->number ssize) (string->number esize) (string->number step) (string->number freq)))
+

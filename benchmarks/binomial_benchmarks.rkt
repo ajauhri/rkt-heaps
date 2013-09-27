@@ -1,8 +1,10 @@
+#! /usr/bin/env racket
 #lang racket
-(require plot "../src/binomial.rkt")
-(plot-new-window? #t)
+(require plot "../src/binomial.rkt" racket/cmdline)
 
 (provide plot-graphs)
+
+(plot-new-window? #t)
 
 (define R 4294967087)
 
@@ -53,3 +55,7 @@
           (lines (get-plot-data time-insert ssize esize step freq) #:color 3 #:label "insert") ;my intuition for the graph to be proportional findmin, is due to the copy of the vector. deletemin involves finding the min other than the copy of vector hence more cost
           (lines (get-plot-data time-meld ssize esize step freq) #:color 0 #:label "meld")) 
         #:x-label "n" #:y-label "Average time (ms)" #:out-file (format "binomial_~a_~a_~a_~a" ssize esize step freq) #:out-kind 'png))
+
+(command-line 
+#:args
+(ssize esize step freq) (plot-graphs (string->number ssize) (string->number esize) (string->number step) (string->number freq)))

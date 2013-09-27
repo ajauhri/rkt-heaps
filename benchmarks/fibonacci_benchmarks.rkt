@@ -1,8 +1,10 @@
+#! /usr/bin/env racket
 #lang racket
-(require plot "../src/fibonacci.rkt")
-(plot-new-window? #t)
+(require plot "../src/fibonacci.rkt" racket/cmdline)
 
 (provide plot-graphs)
+
+(plot-new-window? #t)
 
 (define R 4294967087)
 
@@ -91,3 +93,7 @@
           (lines (get-plot-data time-decrement ssize esize step freq) #:color 13 #:label "decrement" #:style 'solid)
           (lines (get-plot-data time-delete ssize esize step freq) #:color 3 #:label "delete" #:style 'dot-dash))
         #:x-label "n" #:y-label "Average time (ms)" #:out-file (format "fibonacci_~a_~a_~a_~a" ssize esize step freq) #:out-kind 'png))
+
+(command-line 
+#:args
+(ssize esize step freq) (plot-graphs (string->number ssize) (string->number esize) (string->number step) (string->number freq)))
