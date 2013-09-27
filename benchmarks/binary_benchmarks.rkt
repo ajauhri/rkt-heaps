@@ -54,12 +54,13 @@
                (cons (vector i (vector-ref v j)) lst)))))
 
 (define (plot-graphs ssize esize step freq)
-  (plot (list 
-          (lines (get-plot-data time-heap-min ssize esize step freq) #:color 1 #:label "heap-min")
-          (lines (get-plot-data time-heap-remove-min! ssize esize step freq) #:color 2 #:label "heap-remove-min!")
-          (lines (get-plot-data time-heap-add! ssize esize step freq) #:color 3 #:label "heap-add!") 
-          (lines (get-plot-data time-heap-add-all! ssize esize step freq) #:color 0 #:label "heap-add-all!")) 
-        #:x-label "n" #:y-label "Average time (ms)" #:out-file (format "binary_~a_~a_~a_~a" ssize esize step freq) #:out-kind 'png))
+  (define plot-jpeg-quality 0)
+  (plot-file (list 
+               (lines (get-plot-data time-heap-min ssize esize step freq) #:color 1 #:label "heap-min" #:style 'dot)
+               (lines (get-plot-data time-heap-remove-min! ssize esize step freq) #:color 2 #:label "heap-remove-min!" #:style 'solid)
+               (lines (get-plot-data time-heap-add! ssize esize step freq) #:color 3 #:label "heap-add!" #:style 'long-dash) 
+               (lines (get-plot-data time-heap-add-all! ssize esize step freq) #:color 0 #:label "heap-add-all!" #:style 'dot-dash #:width 2 #:alpha 1)) 
+             #:x-label "n" #:y-label "Average time (ms)" (format "binary_~a_~a_~a_~a" ssize esize step freq) 'pdf))
 
 (command-line 
   #:args

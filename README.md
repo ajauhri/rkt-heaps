@@ -12,7 +12,15 @@ The implementation for Binomial heaps is purely functional whereas for Fibonacci
 Binomial heap is a collection of binomial trees which may be handy for quick merging of heaps; delete min to name some features. Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Particularly, they allow to deletion of a particular node, and modification of its value. 
 
 Usage
-====
+----
+
+
+Benchmarks
+----
+
+
+Running the test suite 
+----
 
 
 

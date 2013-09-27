@@ -49,13 +49,13 @@
                (cons (vector i (vector-ref v j)) lst)))))
 
 (define (plot-graphs ssize esize step freq)
-  (plot (list 
-          (lines (get-plot-data time-findmin ssize esize step freq) #:color 1 #:label "findmin")
-          (lines (get-plot-data time-deletemin ssize esize step freq) #:color 2 #:label "deletemin")
-          (lines (get-plot-data time-insert ssize esize step freq) #:color 3 #:label "insert") ;my intuition for the graph to be proportional findmin, is due to the copy of the vector. deletemin involves finding the min other than the copy of vector hence more cost
-          (lines (get-plot-data time-meld ssize esize step freq) #:color 0 #:label "meld")) 
-        #:x-label "n" #:y-label "Average time (ms)" #:out-file (format "binomial_~a_~a_~a_~a" ssize esize step freq) #:out-kind 'png))
+  (plot-file (list 
+               (lines (get-plot-data time-findmin ssize esize step freq) #:color 1 #:label "findmin" #:style 'dot)
+               (lines (get-plot-data time-deletemin ssize esize step freq) #:color 2 #:label "deletemin" #:style 'solid)
+               (lines (get-plot-data time-insert ssize esize step freq) #:color 3 #:label "insert" #:style 'long-dash) 
+               (lines (get-plot-data time-meld ssize esize step freq) #:color 0 #:label "meld" #:style 'dot-dash)) 
+             #:x-label "n" #:y-label "Average time (ms)" (format "binomial_~a_~a_~a_~a" ssize esize step freq) 'pdf))
 
 (command-line 
-#:args
-(ssize esize step freq) (plot-graphs (string->number ssize) (string->number esize) (string->number step) (string->number freq)))
+  #:args
+  (ssize esize step freq) (plot-graphs (string->number ssize) (string->number esize) (string->number step) (string->number freq)))

@@ -85,14 +85,14 @@
                (cons (vector i (vector-ref v j)) lst)))))
 
 (define (plot-graphs ssize esize step freq)
-  (plot (list 
+  (plot-file (list 
           (lines (get-plot-data time-findmin ssize esize step freq) #:color 9 #:label "findmin" #:style 'dot)
           (lines (get-plot-data time-deletemin ssize esize step freq) #:color 0 #:label "deletemin" #:style 'solid)
           (lines (get-plot-data time-insert ssize esize step freq) #:color 11 #:label "insert" #:style 'long-dash)
           (lines (get-plot-data time-meld ssize esize step freq) #:color 10 #:label "meld" #:style 'short-dash)
           (lines (get-plot-data time-decrement ssize esize step freq) #:color 13 #:label "decrement" #:style 'solid)
           (lines (get-plot-data time-delete ssize esize step freq) #:color 3 #:label "delete" #:style 'dot-dash))
-        #:x-label "n" #:y-label "Average time (ms)" #:out-file (format "fibonacci_~a_~a_~a_~a" ssize esize step freq) #:out-kind 'png))
+        #:x-label "n" #:y-label "Average time (ms)" (format "fibonacci_~a_~a_~a_~a" ssize esize step freq) 'pdf))
 
 (command-line 
 #:args
