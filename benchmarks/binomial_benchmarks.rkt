@@ -54,7 +54,7 @@
                (lines (get-plot-data time-deletemin ssize esize step freq) #:color 2 #:label "deletemin" #:style 'solid)
                (lines (get-plot-data time-insert ssize esize step freq) #:color 3 #:label "insert" #:style 'long-dash) 
                (lines (get-plot-data time-meld ssize esize step freq) #:color 0 #:label "meld" #:style 'dot-dash)) 
-             #:x-label "n" #:y-label "Average time (ms)" (format "binomial_~a_~a_~a_~a" ssize esize step freq) 'pdf))
+             #:x-label "n" #:y-label "Average time (ms)" (format "binomial_~a_~a_~a_~a.pdf" ssize esize step freq) 'pdf))
 
 (command-line 
   #:args

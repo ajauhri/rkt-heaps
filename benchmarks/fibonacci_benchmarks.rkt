@@ -92,7 +92,7 @@
           (lines (get-plot-data time-meld ssize esize step freq) #:color 10 #:label "meld" #:style 'short-dash)
           (lines (get-plot-data time-decrement ssize esize step freq) #:color 13 #:label "decrement" #:style 'solid)
           (lines (get-plot-data time-delete ssize esize step freq) #:color 3 #:label "delete" #:style 'dot-dash))
-        #:x-label "n" #:y-label "Average time (ms)" (format "fibonacci_~a_~a_~a_~a" ssize esize step freq) 'pdf))
+        #:x-label "n" #:y-label "Average time (ms)" (format "fibonacci_~a_~a_~a_~a.pdf" ssize esize step freq) 'pdf))
 
 (command-line 
 #:args

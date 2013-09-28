@@ -60,7 +60,7 @@
                (lines (get-plot-data time-heap-remove-min! ssize esize step freq) #:color 2 #:label "heap-remove-min!" #:style 'solid)
                (lines (get-plot-data time-heap-add! ssize esize step freq) #:color 3 #:label "heap-add!" #:style 'long-dash) 
                (lines (get-plot-data time-heap-add-all! ssize esize step freq) #:color 0 #:label "heap-add-all!" #:style 'dot-dash #:width 2 #:alpha 1)) 
-             #:x-label "n" #:y-label "Average time (ms)" (format "binary_~a_~a_~a_~a" ssize esize step freq) 'pdf))
+             #:x-label "n" #:y-label "Average time (ms)" (format "binary_~a_~a_~a_~a.pdf" ssize esize step freq) 'pdf))
 
 (command-line 
   #:args
