@@ -1,6 +1,7 @@
+#! /usr/bin/env racket
 #lang racket
-(require rackunit "../src/fibonacci.rkt")
-(run-test
+(require rackunit "../src/fibonacci.rkt" "../src/fibonacci_helper.rkt" rackunit/text-ui)
+(run-tests
   (test-suite
     "fibonacci heap"
     (test-case

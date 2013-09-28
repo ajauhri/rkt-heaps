@@ -8,9 +8,12 @@
 ;; decrement    - O(1)
 ;; delete       - O(log n)
 
+;; Additional functions:
+;; heap-size
+ 
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert! deletemin! meld decrement! delete! (struct-out heap) (struct-out node))
+(provide makeheap findmin insert! deletemin! meld decrement! delete! heap-minref heap-roots heap-size node-children node-parent)
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))

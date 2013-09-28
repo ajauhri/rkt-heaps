@@ -1,6 +1,7 @@
+#! /usr/bin/env racket
 #lang racket
-(require rackunit "../src/binomial.rkt")
-(run-test
+(require rackunit "../src/binomial.rkt" rackunit/text-ui)
+(run-tests
   (test-suite
     "binomial heap"
     (test-case
@@ -37,5 +38,5 @@
 
     (test-case
       "Checking a simple meld"
-      (check-true (equal? (cons (cons (vector #f 1 1) 2) 1) (meld (makeheap 1) (makeheap 1))))))) 
+      (check-true (equal? (cons (cons (vector #f 1 1) 2) 1) (meld (makeheap 1) (makeheap 1)))))))
 

@@ -4,7 +4,8 @@
 
 (struct heap (minref roots size) #:mutable)
 (struct node (val parent children marked) #:mutable)
- 
+
+;; Adds all children to a vector based on their rank
 (define (create-children-rts-vec nodevec maxrnk)
   (cond ((not (exact-nonnegative-integer? maxrnk)) (raise-argument-error 'create-rts-vec "exact-nonnegative-integer?" maxrnk))
         ((= maxrnk 0) #())
@@ -17,6 +18,7 @@
                                    (vector-append (vector-ref res noderank) (vector node)))))
                res))))
 
+;; Corrects the ith rank slot of a vector such that it only has one root element
 (define (correct-rts-vec! rts i)
   (cond ((<= (vector-length (vector-ref rts i)) 1) (void))
         (else (let* ((subelems (vector-take (vector-ref rts i) 2))
@@ -33,6 +35,7 @@
                        (vector-set! rts (+ i 1) (vector-append (vector-ref rts (+ i 1)) (vector node2)))))
                 (correct-rts-vec! rts i)))))
 
+;; Recursively checks if parent node is marked or not and adds parent to root vector of the heap if needed.
 (define (check-parents! h parent child)
   (cond ((eq? parent #f) (void))
          ((not (node-marked parent))
@@ -45,12 +48,14 @@
            (vector-set! (heap-roots h) parentrnk (vector-append (vector-ref (heap-roots h) parentrnk) (vector parent)))
            (check-parents! h (node-parent parent))))))
 
+;; Remove a node from a vector of nodes
 (define (remove-node nodevec noderef)
   (for/fold ([res #()])
             ([n (in-vector nodevec)])
             (if (eq? n noderef) res
               (vector-append res (vector n)))))
 
+;; Wrapper around vector-ref such that if pos is out of range, empty vector is returned
 (define (vec-ref vec pos)
   (cond ((<= (vector-length vec) pos) #())
         (else (vector-ref vec pos))))
