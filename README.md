@@ -17,7 +17,7 @@ Usage
 
 Benchmarks
 ----
-
+![Binomial](https://www.dropbox.com/s/55lgcn7dh6z7833/binary_100_5000_50_50.pdf) 
 
 Running the test suite 
 ----
