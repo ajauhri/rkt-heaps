@@ -21,17 +21,19 @@ Benchmarks can be easily generated for all core functions using files [here](htt
 * ssize - the starting size of the heap in the benchmark
 * esize - the largest size of the heap to be included in the benchmark
 * step - increment in the size of heap for the subsequent step 
-* freq - # of exectuion cycles to be run for any method 
+* freq - # of execution cycles to be run for any method 
 
-For example, `./binomial_benchmarks.rkt 10 100 10 10` will have timing of methods measured over heap sizes - 10 20 30 40 50 60 70 80 90 100, for all methods 10 times, and then take its mean. It fill generate a pdf file titled as `binomial_benchmarks_10_100_10_10.pdf`.
+For example, `./binomial_benchmarks.rkt 10 100 10 10` will have timing of methods measured over heap sizes - 10 20 30 40 50 60 70 80 90 100, for all methods 10 times, and then take its mean. It will generate a pdf file titled as `binomial_benchmarks_10_100_10_10.pdf`.
 
 Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison since `Binomial` & `Fibonacci` heap implementations provide a great amount of speedup for `heap-add-all!` operation which is similar to `meld` operation for `Binomial` and `Fibonacci` heap here.
 
 You can also see some existing benchmarks generated here:
 
-[Binary](https://www.dropbox.com/s/55lgcn7dh6z7833/binary_100_5000_50_50.pdf) 
-[Binomial](https://www.dropbox.com/s/9c1md2iwq96vx7i/binomial_100_5000_50_50.pdf) 
-[Fibonacci](https://www.dropbox.com/s/jdzvi9kcgijj9u2/fibonacci_100_5000_50_50.pdf)
+* [Binary Heaps (existing)](https://www.dropbox.com/s/55lgcn7dh6z7833/binary_100_5000_50_50.pdf) 
+
+* [Binomial Heaps (new)](https://www.dropbox.com/s/9c1md2iwq96vx7i/binomial_100_5000_50_50.pdf) 
+
+* [Fibonacci Heaps (new)](https://www.dropbox.com/s/jdzvi9kcgijj9u2/fibonacci_100_5000_50_50.pdf)
 
 Running the test suite 
 ----
