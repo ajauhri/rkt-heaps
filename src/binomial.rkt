@@ -1,13 +1,13 @@
 #lang racket
-;; Core functions that implement Binomial heaps. Developed by J. Vuillemin in 1978. They are a special case of Fibonacci heaps. Core functions and amortized costs are as follows:
-;; makeheap     - O(1)
-;; findmin      - O(1) 
-;; insert       - O(1) 
-;; deletemin    - O(log n)
-;; meld         - O(log n) (eager version)
+;; Core functions that implement Binomial heaps. Developed by J. Vuillemin in 1978. They are a special case of Fibonacci heaps. This is a pure functional implementation. Core functions and amortized costs are as follows:
+;; makeheap     - creates a Binomial heap with the real value provided. Amortized cost is O(1)
+;; findmin      - returns the minimum value in the heap. Amortized cost is O(1) 
+;; insert       - adds a real value to a copy of the heap provided as argument. Since the heap is not mutated, the cost is not constant as otherwise could have been had it not copy the existing the heap.
+;; deletemin    - removes the min value from the new heap provided. Amortized cost is O(log n)
+;; meld         - melds two heaps into a new heap. This is the eager version of meld as described by Kozen. Amortized cost O(log n)
 
 ;; Additional functions:
-;; count        - O(1)
+;; count        - gives the number of real values inserted in the heap. Cost - O(1)
 
 (require "binomial_helper.rkt")
 

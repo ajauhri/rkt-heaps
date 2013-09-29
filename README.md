@@ -38,7 +38,7 @@ You can also see some existing benchmarks generated here:
 Running the test suite 
 ----
 
-Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/tests), and can be run using
+Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/tests), and individuals test suite can be run using:
 	
 	./rkt-heaps/tests/binomial_tests
 	./rkt-heaps/tests/binomial_helper_tests

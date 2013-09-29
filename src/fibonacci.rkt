@@ -1,19 +1,16 @@
 #lang racket 
 ;; Core functions that implement Fibonacci heaps. Developed by Michael L. Fredman and Robert E. Tarjan in 1984. Core functions and amortized costs are as follows:
-;; makeheap     - O(1) 
-;; findmin      - O(1)
-;; insert       - O(1)
-;; deletemin    - O(log n)
-;; meld         - O(1)
-;; decrement    - O(1)
-;; delete       - O(log n)
+;; makeheap     - creates a Fibonacci heap with the real value provided. Amortized cost is O(1)
+;; findmin      - returns the minimum value in the heap. Amortized cost is O(1)
+;; insert!      - adds a real value to the heap. Amortized cost is O(1)
+;; deletemin!   - removes the reference of the node with the min value. Amortized cost is O(log n)
+;; meld         - melds two heaps into a new heap, Amortized cost is O(1)
+;; decrement!   - decrements the value of the node by delta. Amortized cost is O(1)
+;; delete!      - deletes a node from the heap. Amortized cost is O(log n)
 
-;; Additional functions:
-;; heap-size
- 
 (require "fibonacci_helper.rkt")
 
-(provide makeheap findmin insert! deletemin! meld decrement! delete! heap-minref heap-roots heap-size node-children node-parent)
+(provide makeheap findmin insert! deletemin! meld decrement! delete! heap-minref heap-roots heap-size node-val node-children node-parent)
 
 (define (makeheap val)
   (let ((n (node val #f #() #f)))
