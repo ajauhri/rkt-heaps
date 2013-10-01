@@ -13,6 +13,10 @@ Binomial heap is a collection of binomial trees which may be handy for quick mer
 
 Usage
 ----
+Clone repository using
+	
+	git clone git@github.com:ajauhri/rkt-heaps.git	
+
 
 
 Benchmarks
@@ -43,7 +47,6 @@ Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/
 	./rkt-heaps/tests/binomial_tests
 	./rkt-heaps/tests/binomial_helper_tests
 	./rkt-heap/tests/fibonacci_tests
-
 
 
 
