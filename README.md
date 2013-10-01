@@ -18,6 +18,7 @@ Clone repository using:
 	git clone git@github.com:ajauhri/rkt-heaps.git	
 
 Open `racket` in terminal, add interfaces using:
+
 	(require "$RKT_HEAPS_HOME/src/binomial.rkt")
 	(require "$RKT_HEAPS_HOME/src/fibonacci.rkt")
 
