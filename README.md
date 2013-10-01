@@ -13,11 +13,17 @@ Binomial heap is a collection of binomial trees which may be handy for quick mer
 
 Usage
 ----
-Clone repository using
+Clone repository using:
 	
 	git clone git@github.com:ajauhri/rkt-heaps.git	
 
+Open `racket` in terminal, add interfaces using:
+	(require "$RKT_HEAPS_HOME/src/binomial.rkt")
+	(require "$RKT_HEAPS_HOME/src/fibonacci.rkt")
 
+, where `$RKT_HEAPS_HOME` is the root directory for the downloaded source
+
+All functions exposed are provided in the header section of each heap file viz. [binomial.rkt](https://github.com/ajauhri/rkt-heaps/blob/master/src/binomial.rkt) and [fibonacci.rkt](https://github.com/ajauhri/rkt-heaps/blob/master/src/fibonacci.rkt) 
 
 Benchmarks
 ----
@@ -29,9 +35,9 @@ Benchmarks can be easily generated for all core functions using files [here](htt
 
 For example, `./binomial_benchmarks.rkt 10 100 10 10` will have timing of methods measured over heap sizes - 10 20 30 40 50 60 70 80 90 100, for all methods 10 times, and then take its mean. It will generate a pdf file titled as `binomial_benchmarks_10_100_10_10.pdf`.
 
-Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison since `Binomial` & `Fibonacci` heap implementations provide a great amount of speedup for `heap-add-all!` operation which is similar to `meld` operation for `Binomial` and `Fibonacci` heap here.
+Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison. `Binomial` & `Fibonacci` heap implementations provide a great amount of speedup for `heap-add-all!`, belonging to `Binary heap`, operation which is similar to `meld` operation for `Binomial` and `Fibonacci` heap in this implementation.
 
-You can also see some existing benchmarks generated here:
+You can also see some pre-generated benchmarks here:
 
 * [Binary Heaps (existing)](https://www.dropbox.com/s/55lgcn7dh6z7833/binary_100_5000_50_50.pdf) 
 
@@ -47,6 +53,10 @@ Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/
 	./rkt-heaps/tests/binomial_tests
 	./rkt-heaps/tests/binomial_helper_tests
 	./rkt-heap/tests/fibonacci_tests
+
+All tests can be run using:
+
+	./rkt-heaps/tests/run_all_tests.rkt
 
 
 

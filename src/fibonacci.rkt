@@ -1,26 +1,38 @@
 #lang racket 
 ;; Core functions that implement Fibonacci heaps. Developed by Michael L. Fredman and Robert E. Tarjan in 1984. Core functions and amortized costs are as follows:
-;; makeheap     - creates a Fibonacci heap with the real value provided. Amortized cost is O(1)
-;; findmin      - returns the minimum value in the heap. Amortized cost is O(1)
-;; insert!      - adds a real value to the heap. Amortized cost is O(1)
-;; deletemin!   - removes the reference of the node with the min value. Amortized cost is O(log n)
-;; meld         - melds two heaps into a new heap, Amortized cost is O(1)
-;; decrement!   - decrements the value of the node by delta. Amortized cost is O(1)
-;; delete!      - deletes a node from the heap. Amortized cost is O(log n)
+;; makeheap       - creates a Fibonacci heap with the number value provided. Amortized cost is O(1)
+;; findmin        - returns the minimum value in the heap. Amortized cost is O(1)
+;; insert!        - adds a number value to the heap. Amortized cost is O(1)
+;; deletemin!     - removes the reference of the node with the min value. Amortized cost is O(log n)
+;; meld           - melds two heaps into a new heap, Amortized cost is O(1)
+;; decrement!     - decrements the value of the node by delta. Amortized cost is O(1)
+;; delete!        - deletes a node from the heap. Amortized cost is O(log n)
+
+;; Additional functions:
+;; heap-minref    - gives the reference to min node in the heap 
+;; heap-roots     - returns a vector with references to all roots in the heap (based on the rank)
+;; heap-size      - gives the number of number values inserted in the heap
+;; node-val       - gives the value stored in the node
+;; node-children  - returns a vector of all child node references in the node
+;; node-parent    - returns reference to the parent node
 
 (require "fibonacci_helper.rkt")
 
 (provide makeheap findmin insert! deletemin! meld decrement! delete! heap-minref heap-roots heap-size node-val node-children node-parent)
 
+;; Returns a new fibonacci heap containing only one number
 (define (makeheap val)
-  (let ((n (node val #f #() #f)))
-   (heap n (vector (vector n)) 1)))
+  (cond ((not (number? val)) (raise-argument-error 'makeheap "number?" val))
+        (else (let ((n (node val #f #() #f)))
+               (heap n (vector (vector n)) 1)))))
 
+;; Returns the number in the min node of the heap
 (define (findmin h)
   (cond ((not (heap? h)) (raise-argument-error 'findmin "heap?" h))
         ((= (heap-size h) 0) (raise-type-error 'findmin "node" (heap-minref h)))
         (else (node-val (heap-minref h)))))
 
+;; Inserts a number to an existing heap
 (define (insert! h val)
   (cond ((not (heap? h)) (raise-argument-error 'insert! "heap?" 0 h val))
         ((not (number? val)) (raise-argument-error 'insert! "number?" 1 h val))
@@ -30,7 +42,7 @@
                (set-heap-size! h (+ (heap-size h) 1))
                (when (and (> (heap-size h) 0) (< val (findmin h))) (set-heap-minref! h n))))))
 
-;; Returns nothing. Modifies the heap provided and its nodes
+;; Modifies the heap provided and its nodes
 ;; Commentary:
 ;; - this procedure mutates node->parent & node->children of the previously defined nodes in the heap
 ;; - since deletemin is the only time root vectors are properly sorted as per their rank, we create a vector of size (log n) such that all nodes 
@@ -97,9 +109,10 @@
                           (heap-minref h1))))
             (heap minref rts (+ (heap-size h1) (heap-size h2)))))))
 
-;; Returns void.
+;; Decrements a value of the node specified in the heap
 ;; Commentary:
 ;; - modifies the roots and min, if needed, of the heap argument 
+;; - if heap condition is violated, then parent of the node is checked and if already marked, it is removed. This happens recursively
 (define (decrement! h noderef delta)
   (cond ((not (heap? h)) (raise-argument-error 'decrement! "heap?" 0 h noderef delta))
         ((not (node? noderef)) (raise-argument-error 'decrement! "node?" 1 h noderef delta))

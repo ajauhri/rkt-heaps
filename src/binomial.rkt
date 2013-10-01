@@ -1,26 +1,26 @@
 #lang racket
 ;; Core functions that implement Binomial heaps. Developed by J. Vuillemin in 1978. They are a special case of Fibonacci heaps. This is a pure functional implementation. Core functions and amortized costs are as follows:
-;; makeheap     - creates a Binomial heap with the real value provided. Amortized cost is O(1)
+;; makeheap     - creates a Binomial heap with the number value provided. Amortized cost is O(1)
 ;; findmin      - returns the minimum value in the heap. Amortized cost is O(1) 
-;; insert       - adds a real value to a copy of the heap provided as argument. Since the heap is not mutated, the cost is not constant as otherwise could have been had it not copy the existing the heap.
+;; insert       - adds a number value to a copy of the heap provided as argument. Since the heap is not mutated, the cost is not constant as otherwise could have been had it not copy the existing the heap.
 ;; deletemin    - removes the min value from the new heap provided. Amortized cost is O(log n)
 ;; meld         - melds two heaps into a new heap. This is the eager version of meld as described by Kozen. Amortized cost O(log n)
 
 ;; Additional functions:
-;; count        - gives the number of real values inserted in the heap. Cost - O(1)
+;; count        - gives the number of number values inserted in the heap. Cost - O(1)
 
 (require "binomial_helper.rkt")
 
 (provide makeheap findmin insert deletemin meld count)
 
-;; Returns a new heap containing only element
+;; Returns a new binomial heap containing only one number
 ;; Commentary:
 ;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make findmin a constant time operation, the min is stored as the `cdr` of another pair.
 (define (makeheap val)
   (cond ((not (number? val)) (raise-argument-error 'makeheap "number?" val))
         (else (cons (cons (vector val) 1) val))))
 
-;; Returns the min element in the heap
+;; Returns the min value in the heap
 ;; Commentary: 
 ;;- vector-ref is takes constant time - www.eecs.berkeley.edu/~bh/ssch23/vectors.html 
 ;;- if min is not provided or argument not heap. #f is returned 
@@ -28,7 +28,7 @@
   (cond ((not (heap-lazy? h)) (raise-argument-error 'findmin "heap-lazy?" h))
         (else (cdr h))))
 
-;; Insert a positive integer to an existing heap and returns the resultant heap
+;; Inserts a number to an existing heap and returns the resultant heap
 (define (insert h val)
   (cond ((not (heap-lazy? h)) (raise-argument-error 'insert "heap-lazy?" 0 h val))
         ((not (number? val)) (raise-argument-error 'insert "number?" 1 h val))
