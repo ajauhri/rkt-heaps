@@ -97,7 +97,7 @@
                                 ((< minh1 minh2) minh1)
                                 (else minh2)))))))
 
-;; Returns the number of elements in the heap. The vector size for storing the all elements may be greater than the count.
+;; Returns the count of elements in the heap. The vector size for storing the all elements may be greater than the count.
 (define (count h) 
   (cond ((not (heap-lazy? h)) (raise-argument-error 'count "heap-lazy?" h)) 
         (else (cdr (car h)))))
