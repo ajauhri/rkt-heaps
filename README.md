@@ -9,7 +9,7 @@ This is a functional implementation of heaps viz. Binomial and Fibonacci. For de
 
 The implementation for Binomial heaps is purely functional whereas for Fibonacci heaps there exists destructive (mutating) operations.
 
-Brief description of Binomial & Fibonacci heaps
+Brief description
 ----
 
 Binomial heap is a collection of heap-ordered binomial trees with a pointer `min` to the tree whose root has minimum value. They are handy for quick merging of multiple heaps, and deleting node with minimum value. 
