@@ -28,8 +28,8 @@ Open `racket` in terminal or add to source, using:
 , where `$RKT_HEAPS_HOME` is the root directory for the downloaded source.
 
 All functions are documented here :
-* [Binomial docs](https://github.com/ajauhri/rkt-heaps/blob/master/docs/binomial/index.html) 
-* [Fibonacci docs](https://github.com/ajauhri/rkt-heaps/blob/master/docs/fibonacci/index.html) 
+* [Binomial docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/binomial/index.html) 
+* [Fibonacci docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/fibonacci/index.html) 
 
 Benchmarks
 ----
