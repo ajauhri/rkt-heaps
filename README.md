@@ -47,9 +47,9 @@ Benchmarks can be easily generated for all core functions using files [here](htt
 
 For example, `./binomial_benchmarks.rkt 10 100 10 10` will have timing of operations measured over heap sizes - 10 20 30 40 50 60 70 80 90 100, for all operations 10 times, and then take its mean. It will generate a pdf file titled as `binomial_benchmarks_10_100_10_10.pdf`.
 
-Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison. `Binomial` & `Fibonacci` heap implementations provide a great amount of speedup for `heap-add-all!`, belonging to `Binary heap`, operation which is similar to `meld` operation for `Binomial` and `Fibonacci` heap in this implementation.
+Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison. For instance, `Fibonacci` heap implementations provides almost 100x speedup for `heap-add-all!` operation. The equivalent for this API is called the `meld` operation for both `Binomial` and `Fibonacci` heaps.
 
-You can also see some pre-generated benchmarks here:
+Some pre-generated benchmarks can be viewed here:
 
 * [Binary Heaps (existing)](https://www.dropbox.com/s/55lgcn7dh6z7833/binary_100_5000_50_50.pdf) 
 
@@ -60,7 +60,7 @@ You can also see some pre-generated benchmarks here:
 Running the test suite 
 ----
 
-Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/tests), and individuals test suite can be run using:
+Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/tests), and individual test suite can be run using:
 	
 	./rkt-heaps/tests/binomial_tests
 	./rkt-heaps/tests/binomial_helper_tests
