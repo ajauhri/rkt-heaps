@@ -1,7 +1,7 @@
 Heaps for Racket
 ====
 
-This is a functional implementation of heaps viz. Binomial and Fibonacci. For development the following set of materials were referred:
+This is a functional implementation of heaps viz. Binomial and Fibonacci. For development, the following set of materials were referred:
 * [Kozen](http://www.amazon.com/Analysis-Algorithms-Monographs-Computer-Science/dp/0387976876) 
 * [Kevin Wayne's lecture notes](http://www.cs.princeton.edu/~wayne/teaching/fibonacci-heap.pdf)
 * [Fredman & Tarjan. "Fibonacci heaps and their uses in improved network optimization algorithms"](http://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/fibonacci%20heaps.pdf)
@@ -69,8 +69,4 @@ Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/
 All tests can be run using:
 
 	./rkt-heaps/tests/run_all_tests.rkt
-
-
-
-
 
