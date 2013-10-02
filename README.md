@@ -12,9 +12,9 @@ The implementation for Binomial heaps is purely functional whereas for Fibonacci
 Brief description
 ----
 
-Binomial heap is a collection of heap-ordered binomial trees with a pointer `min` to the tree whose root has minimum value. They are handy for quick merging of multiple heaps, and deleting node with minimum value. 
+Binomial heap is a collection of heap-ordered binomial trees with a pointer `min` to the tree whose root has minimum value. They are handy for quick merging of multiple heaps, and deleting the node with the minimal value. 
 
-Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Specifically, they allow deletion of a particular node, and modification of its value. For a more detailed description, refer to materials cited above.
+Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Specifically, they allow deletion of a `node` from the heap, and modification of the value of a `node` in the heap. For a more detailed description, refer to materials cited above.
 
 For a complete description of operations provided by both heaps in this API, refer to [Binomial docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/binomial/index.html) or [Fibonacci docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/fibonacci/index.html).
 
