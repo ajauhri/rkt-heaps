@@ -12,7 +12,7 @@ The implementation for Binomial heaps is purely functional whereas for Fibonacci
 Brief description of Binomial & Fibonacci heaps
 ----
 
-Binomial heap is a collection of heap-ordered binomial trees with a pointer `min` to the tree whose root has minimum value. They are handy for quick merging of heaps, and deleting node with minimum value, to name some operations. Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Particularly, they allow to deletion of a particular node, and modification of its value. For a more detailed description, refer to materials cited above.
+Binomial heap is a collection of heap-ordered binomial trees with a pointer `min` to the tree whose root has minimum value. They are handy for quick merging of heaps, and deleting node with minimum value, to name some operations. Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Particularly, they allow deletion of a particular node, and modification of its value. For a more detailed description, refer to materials cited above.
 
 Usage
 ----
@@ -27,7 +27,7 @@ Open `racket` in terminal or add to source, using:
 
 , where `$RKT_HEAPS_HOME` is the root directory for the downloaded source.
 
-All functions are documented here :
+All functions are documented with examples here:
 * [Binomial docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/binomial/index.html) 
 * [Fibonacci docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/fibonacci/index.html) 
 
