@@ -11,7 +11,7 @@ Fibonacci Heaps
 @(define the-eval (make-base-eval))
 @(the-eval '(require "fibonacci.rkt"))
 
-A @deftech{fibonacci_heap} is a data structure for maintaining a collection of elements. In addition to the binomial heap operations, Fibonacci heaps provide two additional operations viz. @deftech{decrement} and @deftech{delete} exist. Although, it should be noted that that trees in @deftech{Fibonacci heaps} are not binomial trees as the implementation cuts subtrees out of them in a controlled way. The rank of a tree is the number of children of the root, and as with binomial heaps we only link two trees if they have the same rank.
+A @deftech{Fibonacci heap} is a data structure for maintaining a collection of elements. In addition to the binomial heap operations, Fibonacci heaps provide two additional operations viz. @deftech{decrement} and @deftech{delete} exist. Although, it should be noted that that trees in @deftech{Fibonacci heaps} are not binomial trees as the implementation cuts subtrees out of them in a controlled way. The rank of a tree is the number of children of the root, and as with binomial heaps we only link two trees if they have the same rank. It is essential here as the rank of root node of a tree is used as the index in the root vector of the heap to store its reference.
 
 @defproc[(makeheap [val number?]) heap?]{
 
