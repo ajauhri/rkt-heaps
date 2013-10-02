@@ -1,7 +1,7 @@
 Heaps for Racket
 ====
 
-This is a functional implementation of heaps viz. Binomial and Fibonacci. For the development I referred to following materials:
+This is a functional implementation of heaps viz. Binomial and Fibonacci. For the development the following set of materials were referred:
 * [Kozen](http://www.amazon.com/Analysis-Algorithms-Monographs-Computer-Science/dp/0387976876) 
 * [Kevin Wayne's lecture notes](http://www.cs.princeton.edu/~wayne/teaching/fibonacci-heap.pdf)
 * [Fredman & Tarjan. "Fibonacci heaps and their uses in improved network optimization algorithms"](http://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/fibonacci%20heaps.pdf)
@@ -16,7 +16,7 @@ Binomial heap is a collection of heap-ordered binomial trees with a pointer `min
 
 Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Specifically, they allow deletion of a particular node, and modification of its value. For a more detailed description, refer to materials cited above.
 
-For a complete description of operations provided by both these heaps, refer to [Binomial docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/binomial/index.html) or [Fibonacci docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/fibonacci/index.html).
+For a complete description of operations provided by both heaps in this API, refer to [Binomial docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/binomial/index.html) or [Fibonacci docs](http://htmlpreview.github.com/?https://github.com/ajauhri/rkt-heaps/blob/master/docs/fibonacci/index.html).
 
 Usage
 ----
