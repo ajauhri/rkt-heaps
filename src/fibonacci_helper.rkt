@@ -1,8 +1,8 @@
 #lang racket
 
-(provide create-children-rts-vec correct-rts-vec! vec-ref (struct-out heap) (struct-out node) check-parents!)
+(provide create-children-rts-vec correct-rts-vec! vec-ref (struct-out fi-heap) (struct-out node) check-parents!)
 
-(struct heap (minref roots size) #:mutable)
+(struct fi-heap (minref roots size) #:mutable)
 (struct node (val parent children marked) #:mutable)
 
 ;; Adds all children to a vector based on their rank
@@ -45,7 +45,7 @@
           (let ((parentrnk (vector-length (node-children parent))))
            (set-node-children! parent (remove-node (node-children parent) child))
            (set-node-marked! parent #f)
-           (vector-set! (heap-roots h) parentrnk (vector-append (vector-ref (heap-roots h) parentrnk) (vector parent)))
+           (vector-set! (fi-heap-roots h) parentrnk (vector-append (vector-ref (fi-heap-roots h) parentrnk) (vector parent)))
            (check-parents! h (node-parent parent))))))
 
 ;; Remove a node from a vector of nodes

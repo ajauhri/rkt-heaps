@@ -9,7 +9,7 @@
 
     (test-case
       "Checking insert"
-      (check-true (heap? (insert (makeheap 1) 2))))
+      (check-true (heap? (bino-insert (bino-makeheap 1) 2))))
 
     (test-case
       "Checking heap-lazy? and heap? works fine"

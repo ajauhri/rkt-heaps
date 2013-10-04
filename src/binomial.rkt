@@ -11,32 +11,32 @@
 
 (require "binomial_helper.rkt")
 
-(provide makeheap findmin insert deletemin meld count)
+(provide bino-makeheap bino-findmin bino-insert bino-deletemin bino-meld bino-count)
 
 ;; Returns a new binomial heap containing only one number
 ;; Commentary:
 ;; - the heap is structured as a vector along with number of values as a pair with `car` pointing to the vector and `cdr` to the number of values in the heap. To make findmin a constant time operation, the min is stored as the `cdr` of another pair.
-(define (makeheap val)
-  (cond ((not (number? val)) (raise-argument-error 'makeheap "number?" val))
+(define (bino-makeheap val)
+  (cond ((not (number? val)) (raise-argument-error 'bino-makeheap "number?" val))
         (else (cons (cons (vector val) 1) val))))
 
 ;; Returns the min value in the heap
 ;; Commentary: 
 ;;- vector-ref is takes constant time - www.eecs.berkeley.edu/~bh/ssch23/vectors.html 
 ;;- if min is not provided or argument not heap. #f is returned 
-(define (findmin h)
-  (cond ((not (heap-lazy? h)) (raise-argument-error 'findmin "heap-lazy?" h))
+(define (bino-findmin h)
+  (cond ((not (heap-lazy? h)) (raise-argument-error 'bino-findmin "heap-lazy?" h))
         (else (cdr h))))
 
 ;; Inserts a number to an existing heap and returns the resultant heap
-(define (insert h val)
-  (cond ((not (heap-lazy? h)) (raise-argument-error 'insert "heap-lazy?" 0 h val))
-        ((not (number? val)) (raise-argument-error 'insert "number?" 1 h val))
-        (else (meld h (makeheap val)))))
+(define (bino-insert h val)
+  (cond ((not (heap-lazy? h)) (raise-argument-error 'bino-insert "heap-lazy?" 0 h val))
+        ((not (number? val)) (raise-argument-error 'bino-insert "number?" 1 h val))
+        (else (bino-meld h (bino-makeheap val)))))
 
 ;; Deletes the root of the tree with the min value in heap. Melds the remaining values
-(define (deletemin h)
-  (cond ((not (heap? h)) (raise-argument-error 'deletemin "heap?" h))
+(define (bino-deletemin h)
+  (cond ((not (heap? h)) (raise-argument-error 'bino-deletemin "heap?" h))
         ((eq? (cdr h) #f) (raise-user-error "Min value not specified or corrupt heap structure. Given min in heap " (cdr h)))
         (else (let* ((min-index (getmin (car (car h)) (cdr (car h)) 1 #f))
                      (orig-vec (vector-copy (car (car h))))
@@ -46,16 +46,16 @@
                      (tree (vector-copy orig-vec tree-start tree-end)))
                 (vector-copy! orig-vec min-index (make-vector (+ min-index 1) #f))  ; put #f in place of the tree rooted at min
                 (cond ((= count 1) (cons (cons #() 0) #f))
-                      (else (meld (cons (cons orig-vec (- count (+ min-index 1))) 
+                      (else (bino-meld (cons (cons orig-vec (- count (+ min-index 1))) 
                                         (vec-ref orig-vec (getmin orig-vec (- count (+ min-index 1)) 1 #f)))
                                   (cons (cons tree (- tree-end tree-start))
                                         (vec-ref tree (getmin tree (- tree-end tree-start) 1 #f))))))))))
 
 
 ;; Returns a heap which a combination of the two heaps provided as arguments to the method. 
-(define (meld h1 h2)
-  (cond ((not (heap-lazy? h1)) (raise-argument-error 'meld "heap-lazy?" 0 h1 h2))
-        ((not (heap-lazy? h2)) (raise-argument-error 'meld "heap-lazy?" 1 h1 h2))
+(define (bino-meld h1 h2)
+  (cond ((not (heap-lazy? h1)) (raise-argument-error 'bino-meld "heap-lazy?" 0 h1 h2))
+        ((not (heap-lazy? h2)) (raise-argument-error 'bino-meld "heap-lazy?" 1 h1 h2))
         (else (define (couple v1 v2 s1 s2 carry res i)
                 (let ((b1 (root-slot-valid? s1)) 
                       (b2 (root-slot-valid? s2)) 
@@ -90,14 +90,14 @@
                                        (cdr (car h1)) 
                                        (cdr (car h2)) #() #() 1) 
                                (+ (cdr (car h1)) (cdr (car h2)))))
-                    (minh1 (findmin h1))
-                    (minh2 (findmin h2)))
+                    (minh1 (bino-findmin h1))
+                    (minh2 (bino-findmin h2)))
                 (cons res (cond ((eq? #f minh1) minh2)
                                 ((eq? #f minh2) minh1)
                                 ((< minh1 minh2) minh1)
                                 (else minh2)))))))
 
 ;; Returns the count of elements in the heap. The vector size for storing the all elements may be greater than the count.
-(define (count h) 
+(define (bino-count h) 
   (cond ((not (heap-lazy? h)) (raise-argument-error 'count "heap-lazy?" h)) 
         (else (cdr (car h)))))

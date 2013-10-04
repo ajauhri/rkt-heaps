@@ -6,24 +6,6 @@
 
 (plot-new-window? #t)
 
-(define R 4294967087)
-
-(define (make-rand-vector s) 
-  (for/vector #:length s ([i (in-range s)]) (random R)))
-
-(define (make-large-heap v)
-  (let ((h (make-heap <=)))
-   (heap-add-all! h v)
-   h))
-
-(define (time-heap-min h)
-  (let ((start (current-inexact-milliseconds)) (r (heap-min h)) (end (current-inexact-milliseconds)))
-   (- end start))) 
-
-(define (time-heap-remove-min! h)
-  (let ((hcopy (heap-copy h)))
-   (let ((start (current-inexact-milliseconds)) (r (heap-remove-min! hcopy)) (end (current-inexact-milliseconds)))
-    (- end start))))
 
 (define (time-heap-add! h [i (random R)])
   (let ((hcopy (heap-copy h)))
