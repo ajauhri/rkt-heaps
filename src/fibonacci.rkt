@@ -18,7 +18,7 @@
 
 (require "fibonacci_helper.rkt")
 
-(provide fi-makeheap fi-findmin fi-insert! fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-roots fi-heap-size fi-node-val fi-node-children fi-node-parent)
+(provide fi-makeheap fi-findmin fi-insert fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-roots fi-heap-size fi-node-val fi-node-children fi-node-parent)
 
 ;; Returns a new fibonacci heap containing only one number
 (define (fi-makeheap val)
@@ -33,14 +33,11 @@
         (else (node-val (fi-heap-minref h)))))
 
 ;; Inserts a number to an existing heap
-(define (fi-insert! h val)
-  (cond ((not (fi-heap? h)) (raise-argument-error 'fi-insert! "fi-heap?" 0 h val))
-        ((not (number? val)) (raise-argument-error 'fi-insert! "number?" 1 h val))
-        (else (let ((n (node val #f #() #f)))
-               (when (= 0 (fi-heap-size h)) (set-fi-heap-minref! h n))
-               (vector-set! (fi-heap-roots h) 0 (vector-append (vector-ref (fi-heap-roots h) 0) (vector n)))
-               (set-fi-heap-size! h (+ (fi-heap-size h) 1))
-               (when (and (> (fi-heap-size h) 0) (< val (fi-findmin h))) (set-fi-heap-minref! h n))))))
+(define (fi-insert h val)
+  (cond ((not (fi-heap? h)) (raise-argument-error 'fi-insert "fi-heap?" 0 h val))
+        ((not (number? val)) (raise-argument-error 'fi-insert "number?" 1 h val))
+        ((= (fi-heap-size h) 0) (fi-makeheap val))
+        (else (fi-meld h (fi-makeheap val)))))
 
 ;; Modifies the heap provided and its nodes
 ;; Commentary:
@@ -100,9 +97,9 @@
                                                  [j (in-vector (fi-heap-roots h2))])
                                                 (vector-append i j))
                                     (cond ((< (vector-length (fi-heap-roots h1)) (vector-length (fi-heap-roots h2)))
-                                           (vector-take-right (fi-heap-roots h2) (vector-length (fi-heap-roots h1))))
+                                           (vector-drop (fi-heap-roots h2) (vector-length (fi-heap-roots h1))))
                                           ((> (vector-length (fi-heap-roots h1)) (vector-length (fi-heap-roots h2)))
-                                           (vector-take-right (fi-heap-roots h1) (vector-length (fi-heap-roots h2))))
+                                           (vector-drop (fi-heap-roots h1) (vector-length (fi-heap-roots h2))))
                                           (else #()))))
                 (minref (if (> (fi-findmin h1) (fi-findmin h2))
                           (fi-heap-minref h2)

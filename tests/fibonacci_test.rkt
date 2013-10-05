@@ -16,9 +16,9 @@
     (test-case
       "checking findmin, decrement! and delete!" 
       (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2)))) 
-       (fi-insert! h 3)
-       (fi-insert! h 4)
-       (fi-insert! h 5)
+       (set! h (fi-insert h 3))
+       (set! h (fi-insert h 4))
+       (set! h (fi-insert h 5))
        (fi-deletemin! h)
        (define n (vector-ref (fi-node-children (vector-ref (vector-ref (fi-heap-roots h) 2) 0)) 0))
        (fi-decrement! h n 2) 
@@ -28,9 +28,9 @@
     (test-case
       "parent gets marked when one of its children are deleted"
       (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2))))
-       (fi-insert! h 3)
-       (fi-insert! h 4)
-       (fi-insert! h 5)
+       (set! h (fi-insert h 3))
+       (set! h (fi-insert h 4))
+       (set! h (fi-insert h 5))
        (fi-deletemin! h)
        (define n (vector-ref (vector-ref (fi-heap-roots h) 2) 0))
        (define c1 (vector-ref (fi-node-children n) 1))
@@ -41,9 +41,9 @@
     (test-case
       "If heap property is violated during decrement, parent's vector of children is updated correctly"
       (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2))))
-       (fi-insert! h 3)
-       (fi-insert! h 4)
-       (fi-insert! h 5)
+       (set! h (fi-insert h 3))
+       (set! h (fi-insert h 4))
+       (set! h (fi-insert h 5))
        (fi-deletemin! h)
        (define n (vector-ref (vector-ref (fi-heap-roots h) 2) 0))
        (define c1 (vector-ref (fi-node-children n) 1))
@@ -51,12 +51,30 @@
        (fi-decrement! h c2 4)
        (check-true (eq? (vector-length (fi-node-children c1)) 0))))
 
+    (test-case 
+      "if heap of size 1, used with deletemin is eventually of size 0, it should still pass through insert"
+      (let ((h (fi-makeheap 1)))
+       (fi-deletemin! h)
+       (set! h (fi-insert h 2))
+       (check-true (eq? (fi-heap-size h) 1))
+       (check-true (eq? (fi-findmin h) 2))))
+
+    (test-case 
+      "meld heap with different root vector sizes"
+      (let ((h (fi-makeheap 1)))
+       (set! h (fi-insert h 2))
+       (set! h (fi-insert h 3))
+       (set! h (fi-insert h 4))
+       (fi-deletemin! h)
+       (set! h (fi-insert h 5))
+       (check-true (= (vector-length (fi-heap-roots h)) (+ 1 (ceiling (/ (log (fi-heap-size h)) (log 2))))))))
+
     (test-case
       "If two children of a root node are deleted, it shouldn't be marked"
       (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2))))
-       (fi-insert! h 3)
-       (fi-insert! h 4)
-       (fi-insert! h 5)
+       (set! h (fi-insert h 3))
+       (set! h (fi-insert h 4))
+       (set! h (fi-insert h 5))
        (fi-deletemin! h)
        (define n (vector-ref (vector-ref (fi-heap-roots h) 2) 0))
        (define c1 (vector-ref (fi-node-children n) 0))
