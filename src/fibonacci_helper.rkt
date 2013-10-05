@@ -1,52 +1,51 @@
 #lang racket
 
-(provide create-children-rts-vec correct-rts-vec! vec-ref (struct-out fi-heap) (struct-out node) check-parents!)
+(provide (struct-out fi-heap) (struct-out node) check-parents! add-node-to-dll! remove-node-from-dll! combine!)
 
-(struct fi-heap (minref roots size) #:mutable)
-(struct node (val parent children marked) #:mutable)
-
-;; Adds all children to a vector based on their rank
-(define (create-children-rts-vec nodevec maxrnk)
-  (cond ((not (exact-nonnegative-integer? maxrnk)) (raise-argument-error 'create-rts-vec "exact-nonnegative-integer?" maxrnk))
-        ((= maxrnk 0) #())
-        (else (let  ((res (make-vector maxrnk #())))
-               (for ([i (in-range (vector-length nodevec))])
-                    (let* ((node (vector-ref nodevec i))
-                           (noderank (vector-length (node-children node))))
-                      (set-node-parent! node #f)
-                      (vector-set! res noderank 
-                                   (vector-append (vector-ref res noderank) (vector node)))))
-               res))))
+(struct fi-heap (minref size) #:mutable)
+(struct node (val parent children left right marked) #:mutable)
 
 ;; Corrects the ith rank slot of a vector such that it only has one root element
-(define (correct-rts-vec! rts i)
-  (cond ((<= (vector-length (vector-ref rts i)) 1) (void))
-        (else (let* ((subelems (vector-take (vector-ref rts i) 2))
-                     (node1 (vector-ref subelems 0))
-                     (node2 (vector-ref subelems 1))
-                     (foo (vector-set! rts i (vector-drop (vector-ref rts i) 2))))
-                (cond ((<= (node-val node1) (node-val node2))
-                       (set-node-parent! node2 node1)
-                       (set-node-children! node1 (vector-append (node-children node1) (vector node2)))
-                       (vector-set! rts (+ i 1) (vector-append (vector-ref rts (+ i 1)) (vector node1))))
-                      ((> (node-val node1) (node-val node2))
-                       (set-node-parent! node1 node2)
-                       (set-node-children! node2 (vector-append (node-children node2) (vector node1)))
-                       (vector-set! rts (+ i 1) (vector-append (vector-ref rts (+ i 1)) (vector node2)))))
-                (correct-rts-vec! rts i)))))
+(define (combine! h node1 node2)
+  (cond ((<= (node-val node1) (node-val node2))
+         (set-node-parent! node2 node1)
+         (set-node-children! node1 (vector-append (node-children node1) (vector node2)))
+         (remove-node-from-dll! h node2)
+         node1)
+        ((> (node-val node1) (node-val node2))
+         (set-node-parent! node1 node2)
+         (set-node-children! node2 (vector-append (node-children node2) (vector node1)))
+         (remove-node-from-dll! h node1)
+         node2)))
 
 ;; Recursively checks if parent node is marked or not and adds parent to root vector of the heap if needed.
 (define (check-parents! h parent child)
   (cond ((eq? parent #f) (void))
-         ((not (node-marked parent))
-          (set-node-children! parent (remove-node (node-children parent) child))
-          (when (not (eq? #f (node-parent parent))) (set-node-marked! parent #t)))
-         ((node-marked parent)
-          (let ((parentrnk (vector-length (node-children parent))))
-           (set-node-children! parent (remove-node (node-children parent) child))
-           (set-node-marked! parent #f)
-           (vector-set! (fi-heap-roots h) parentrnk (vector-append (vector-ref (fi-heap-roots h) parentrnk) (vector parent)))
-           (check-parents! h (node-parent parent))))))
+        ((not (node-marked parent))
+         (set-node-children! parent (remove-node (node-children parent) child))
+         (when (not (eq? #f (node-parent parent))) (set-node-marked! parent #t)))
+        ((node-marked parent)
+         (set-node-children! parent (remove-node (node-children parent) child))
+         (set-node-marked! parent #f)
+         (add-node-to-dll! h parent)
+         (check-parents! h (node-parent parent) parent))))
+
+;; Not deleting the node from the heap, but adding as a child of a root node
+(define (remove-node-from-dll! h noderef)
+  (let* ((nodeleft (node-left noderef))
+         (noderight (node-right noderef)))
+    (set-node-right! nodeleft noderight)
+    (set-node-left! noderight noderight)
+    (set-node-left! noderef noderef)
+    (set-node-right! noderef noderef)))
+
+(define (add-node-to-dll! h noderef)
+  (let* ((minref (fi-heap-minref h))
+         (minrightref (node-right minref)))
+    (set-node-left! noderef minref)
+    (set-node-right! noderef minrightref)
+    (set-node-right! minref noderef)
+    (set-node-left! minrightref noderef)))
 
 ;; Remove a node from a vector of nodes
 (define (remove-node nodevec noderef)
@@ -55,7 +54,3 @@
             (if (eq? n noderef) res
               (vector-append res (vector n)))))
 
-;; Wrapper around vector-ref such that if pos is out of range, empty vector is returned
-(define (vec-ref vec pos)
-  (cond ((<= (vector-length vec) pos) #())
-        (else (vector-ref vec pos))))

@@ -18,13 +18,15 @@
 
 (require "fibonacci_helper.rkt")
 
-(provide fi-makeheap fi-findmin fi-insert fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-roots fi-heap-size fi-node-val fi-node-children fi-node-parent)
+(provide fi-makeheap fi-findmin fi-insert fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent)
 
 ;; Returns a new fibonacci heap containing only one number
 (define (fi-makeheap val)
   (cond ((not (number? val)) (raise-argument-error 'fi-makeheap "number?" val))
-        (else (let ((n (node val #f #() #f)))
-               (fi-heap n (vector (vector n)) 1)))))
+        (else (let ((n (node val #f #() #f #f #f)))
+               (set-node-left! n n)
+               (set-node-right! n n)
+               (fi-heap n 1)))))
 
 ;; Returns the number in the min node of the heap
 (define (fi-findmin h)
@@ -44,67 +46,70 @@
 ;; - this procedure mutates node->parent & node->children of the previously defined nodes in the heap
 ;; - since deletemin is the only time root vectors are properly sorted as per their rank, we create a vector of size (log n) such that all nodes 
 ;;   (after finding the unique w.r.t. rank) are put in the right slot of the rank vector
+
 (define (fi-deletemin! h)
   (cond ((not (fi-heap? h)) (raise-argument-error 'fi-deletemin! "fi-heap?" h))
         ((= (fi-heap-size h) 0) (raise-type-error 'fi-deletemin! "node" (fi-heap-minref h)))
+        ((= (fi-heap-size h) 1) (set! h #f))
         (else 
           (let* ((maxrnk (+ 1 (inexact->exact (ceiling (/ (log (fi-heap-size h)) (log 2))))))
+                 (rtsvec (make-vector maxrnk (vector)))
+                 (minref (fi-heap-minref h))
+                 (minchildren (node-children minref)))
+            (for ([i (in-vector minchildren)])
+                 (add-node-to-dll! h i))
+            (set-fi-heap-minref! h (node-left minref)) ;set an arbitrary node as min
+            (remove-node-from-dll! h minref)
 
-                 ; put children of min into a root vector
-                 (newrts (create-children-rts-vec (node-children (fi-heap-minref h)) maxrnk))
-                 (oldrts (fi-heap-roots h)))
-
-            ; combine other roots into the ^new root vector 
-            (for ([i (in-range (vector-length newrts))])
-                 (let ((ithrankvec1 (vec-ref oldrts i))
-                       (ithrankvec2 (vec-ref newrts i)))
-                   (vector-set! newrts i (vector-append ithrankvec1 ithrankvec2))))
+            (define (correct-rts! h noderef rtsvec)
+              (let* ((nodernk (vector-length (node-children noderef)))
+                      (nodernkvec (vector-ref (vector-ref rtsvec nodernk))))
+                (cond ((eq? noderef (fi-heap-minref h)) 
+                       (cond ((> (vector-length nodernkvec) 0)
+                              (let ((nodeuped (combine! noderef (vector-ref nodernkvec 0)))
+                                    (nextrnkvec (vector-ref rtsvec (+ 1 nodernk))))
+                                (vector-set! rtsvec nodernk (vector-drop nodernkvec 1))
+                                (vector-set! rtsvec (+ 1 nodernk) (vector-append nextrnkvec (vector nodeuped)))))
+                             ((= (vector-length nodernkvec) 0) (vector-set! rtsvec nodernk (vector noderef)))))
+                      (else (cond ((> (vector-length nodernkvec) 0)
+                                   (let ((nodeuped (combine! noderef (vector-ref nodernkvec 0)))
+                                         (nextrnkvec (vector-ref rtsvec (+ 1 nodernk))))
+                                     (vector-set! rtsvec nodernk (vector-drop nodernkvec 1))
+                                     (vector-set! rtsvec (+ 1 nodernk) (vector-append nextrnkvec (vector nodeuped)))))
+                                  ((= (vector-length nodernkvec) 0) (vector-set! rtsvec nodernk (vector noderef))))
+                            (correct-rts! h (node-right noderef) rtsvec)))))
             
-            ; remove min node from newrts
-            (let ((minrank (vector-length (node-children (fi-heap-minref h))))
-                  (minref (fi-heap-minref h)))
-             (vector-set! newrts minrank 
-                          (for/fold ([res #()])
-                                    ([n (in-vector (vector-ref newrts minrank))])
-                                      (if (eq? n minref) res 
-                                        (vector-append res (vector n))))))
-
-            ; certain no two roots of same rank in the rank vector
-            (for ([i (in-range (vector-length newrts))])
-                 (let ((ithrankvec (vector-ref newrts i)))
-                   (when (> (vector-length ithrankvec) 1) (correct-rts-vec! newrts i))))
+            (correct-rts! h (node-right (fi-heap-minref h)))
 
             ; find min
             (let ((minref (for/fold ([m #f])
-                                    ([i (in-vector newrts)])
-                                    (values (cond ((> (vector-length i) 0) 
+                                    ([i (in-vector rtsvec)])
+                                    (values (cond ((= (vector-length i) 1) 
                                                    (cond ((not (node? m)) (vector-ref i 0))
                                                          ((< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0))
                                                          (else m)))
+                                                  ((> (vector-length i) 1) (raise-result-error 'fi-deletemin! "should have only one root node for each rank" i))
                                                   (else m))))))
               (set-fi-heap-minref! h minref)
-              (set-fi-heap-roots! h newrts)
               (set-fi-heap-size! h (- (fi-heap-size h) 1)))))))
 
 ;; Returns a new heap after joining two heaps
-;; Commentary:
-;; - Doesn't change any nodes or any data of the heap provided as arguments
 (define (fi-meld h1 h2)
   (cond ((not (fi-heap? h1)) (raise-argument-error 'fi-meld "fi-heap?" 0 h1 h2))
         ((not (fi-heap? h2)) (raise-argument-error 'fi-meld "fi-heap?" 1 h1 h2))
         (else
-          (let ((rts (vector-append (for/vector ([i (in-vector (fi-heap-roots h1))]
-                                                 [j (in-vector (fi-heap-roots h2))])
-                                                (vector-append i j))
-                                    (cond ((< (vector-length (fi-heap-roots h1)) (vector-length (fi-heap-roots h2)))
-                                           (vector-drop (fi-heap-roots h2) (vector-length (fi-heap-roots h1))))
-                                          ((> (vector-length (fi-heap-roots h1)) (vector-length (fi-heap-roots h2)))
-                                           (vector-drop (fi-heap-roots h1) (vector-length (fi-heap-roots h2))))
-                                          (else #()))))
-                (minref (if (> (fi-findmin h1) (fi-findmin h2))
-                          (fi-heap-minref h2)
-                          (fi-heap-minref h1))))
-            (fi-heap minref rts (+ (fi-heap-size h1) (fi-heap-size h2)))))))
+          (let* ((h1min (fi-heap-minref h1))
+                 (h2min (fi-heap-minref h2))
+                 (h1minright (node-right h1min))
+                 (h2minleft (node-left h2min))
+                 (minref (if (> (fi-findmin h1) (fi-findmin h2))
+                           h2min
+                           h1min)))
+            (set-node-right! h1min h2min)
+            (set-node-left! h2min h1min)
+            (set-node-left! h1minright h2minleft)
+            (set-node-right! h2minleft h1minright)
+            (fi-heap minref (+ (fi-heap-size h1) (fi-heap-size h2)))))))
 
 ;; Decrements a value of the node specified in the heap
 ;; Commentary:
@@ -115,16 +120,15 @@
         ((not (node? noderef)) (raise-argument-error 'fi-decrement! "node?" 1 h noderef delta))
         ((not (number? delta)) (raise-argument-error 'fi-decrement! "number?" 2 h noderef delta))
         (else (set-node-val! noderef (- (node-val noderef) delta))
-              (when (< (node-val noderef) (fi-findmin h)) (set-fi-heap-minref! h noderef))
 
               ; heap condition violated
               (cond ((and (not (eq? (node-parent noderef) #f)) (< (node-val noderef) (node-val (node-parent noderef))))
-                     (let ((nodernk (vector-length (node-children noderef)))
-                           (parent (node-parent noderef)))
-                       (set-node-parent! noderef #f)
-                       (set-node-marked! noderef #f)
-                       (vector-set! (fi-heap-roots h) nodernk (vector-append (vector-ref (fi-heap-roots h) nodernk) (vector noderef)))
-                       (check-parents! h parent noderef))))))) 
+                     (let* ((parent (node-parent noderef)))
+                      (add-node-to-dll! h noderef)
+                      (set-node-parent! noderef #f)
+                      (set-node-marked! noderef #f)
+                      (check-parents! h parent noderef)
+                      (when (< (node-val noderef) (fi-findmin h)) (set-fi-heap-minref! h noderef)))))))) 
 
 ;; Decrements noderef's value below the min of the heap, and calls deletemin
 (define (fi-delete! h noderef)
@@ -133,7 +137,7 @@
 
         ;if noderef to be deleted is the min node itself 
         (else (cond ((eq? noderef (fi-heap-minref h)) (fi-deletemin! h))
-                    
+
                     ; delta := n - (m - 1)
                     ; m=0; n=1; delta=2
                     ; m=-1; n=0; delta=2

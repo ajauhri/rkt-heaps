@@ -42,34 +42,6 @@
                           (fi-decrement! h (random-walk h 0 #f) (random R))
                           (make-scraggly-heap v (+ count 1) h))))))
 
-
-(define (bi-time-findmin h)
-  (let ((start (current-inexact-milliseconds)) (r (heap-min h)) (end (current-inexact-milliseconds)))
-   (- end start)))
-
-(define (bino-time-findmin h)
-  (let ((start (current-inexact-milliseconds)) (r (bino-findmin h)) (end (current-inexact-milliseconds)))
-   (- end start)))
-
-(define (fi-time-findmin h)
-  (let ((start (current-inexact-milliseconds)) (r (fi-findmin h)) (end (current-inexact-milliseconds)))
-   (- end start)))
-
-(define (bi-time-insert h)
-  (let ((i (random R))
-        (hcopy (heap-copy h)))
-   (let ((start (current-inexact-milliseconds)) (r (heap-add! hcopy i)) (end (current-inexact-milliseconds)))
-    (- end start))))
-
-(define (bino-time-insert h)
-  (let ((i (random R)))
-   (let ((start (current-inexact-milliseconds)) (r (bino-insert h i)) (end (current-inexact-milliseconds)))
-    (- end start))))
-
-(define (fi-time-insert h)
-  (let ((i (random R)))
-   (let ((start (current-inexact-milliseconds)) (r (fi-insert h i)) (end (current-inexact-milliseconds)))
-    (- end start))))
 (define (bi-time-meld h1 h2)
   (let ((hcopy (heap-copy h1)))
    (let ((start (current-inexact-milliseconds)) (r (heap-add-all! hcopy h2)) (end (current-inexact-milliseconds)))
