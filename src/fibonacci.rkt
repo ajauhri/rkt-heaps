@@ -18,7 +18,7 @@
 
 (require "fibonacci_helper.rkt")
 
-(provide fi-makeheap fi-findmin fi-insert fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent)
+(provide fi-makeheap fi-findmin fi-insert fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent (struct-out node) (struct-out fi-heap))
 
 ;; Returns a new fibonacci heap containing only one number
 (define (fi-makeheap val)
@@ -61,45 +61,30 @@
             (set-fi-heap-minref! h (node-left minref)) ;set an arbitrary node as min
             (remove-node-from-dll! h minref)
             
-            ; set the circular queue to #f to get the termination condition for correcting rts 
-            (set-node-right! (node-left (fi-heap-minref h)) #f)
+            (define (get-min h noderef minref)
+              (cond ((eq? noderef (fi-heap-minref h)) minref)
+                    ((< (node-val noderef) (node-val minref)) 
+                     (get-min h (node-right noderef) noderef))
+                    (else (get-min h (node-right noderef) minref))))
+            
+            (set-fi-heap-minref! h (get-min h (node-right (fi-heap-minref h)) (fi-heap-minref h)))
+            (set-fi-heap-size! h (- (fi-heap-size h) 1))     
 
             (define (correct-rts! h noderef rtsvec)
               (let* ((nodernk (vector-length (node-children noderef)))
-                      (nodernkvec (vector-ref rtsvec nodernk)))
-                (cond ((eq? (node-right noderef) #f)
-                       (cond ((> (vector-length nodernkvec) 0)
-                              (let ((nodeuped (combine! h noderef (vector-ref nodernkvec 0)))
-                                    (nextrnkvec (vector-ref rtsvec (+ 1 nodernk))))
-                                (vector-set! rtsvec nodernk (vector-drop nodernkvec 1))
-                                (vector-set! rtsvec (+ 1 nodernk) (vector-append nextrnkvec (vector nodeuped)))))
-                             ((= (vector-length nodernkvec) 0) (vector-set! rtsvec nodernk (vector noderef)))))
-                      
-                       ((> (vector-length nodernkvec) 0)
-                                   (let ((nodeuped (combine! h noderef (vector-ref nodernkvec 0)))
-                                         (nextrnkvec (vector-ref rtsvec (+ 1 nodernk))))
-                                     (vector-set! rtsvec nodernk (vector-drop nodernkvec 1))
-                                     (vector-set! rtsvec (+ 1 nodernk) (vector-append nextrnkvec (vector nodeuped)))
-                                     (correct-rts! h nodeuped rtsvec)))
-                       
-                       ((= (vector-length nodernkvec) 0) (vector-set! rtsvec nodernk (vector noderef))) 
-                            (correct-rts! h (node-right noderef) rtsvec))))
-           
-            ;only one tree exist for each possible rank  
-            (correct-rts! h (fi-heap-minref h) rtsvec)
-            (set-node-right! (node-left (fi-heap-minref h)) (fi-heap-minref h))
+                     (nodernkvec (vector-ref rtsvec nodernk)))
+                (cond ((> (vector-length nodernkvec) 0)
+                       (let ((nodeuped (combine! h noderef (vector-ref nodernkvec 0))))
+                        (vector-set! rtsvec nodernk (vector-drop nodernkvec 1))
+                        (correct-rts! h nodeuped rtsvec)))
+                      ((= (vector-length nodernkvec) 0) 
+                       (vector-set! rtsvec nodernk (vector noderef))
+                       (cond ((eq? (node-right noderef) (fi-heap-minref h)) (void))
+                             (else (correct-rts! h (node-right noderef) rtsvec)))))))
 
-            ; find min
-            (let ((minref (for/fold ([m #f])
-                                    ([i (in-vector rtsvec)])
-                                    (values (cond ((= (vector-length i) 1) 
-                                                   (cond ((not (node? m)) (vector-ref i 0))
-                                                         ((< (node-val (vector-ref i 0)) (node-val m)) (vector-ref i 0))
-                                                         (else m)))
-                                                  ((> (vector-length i) 1) (raise-result-error 'fi-deletemin! "should have only one root node for each rank" i))
-                                                  (else m))))))
-              (set-fi-heap-minref! h minref)
-              (set-fi-heap-size! h (- (fi-heap-size h) 1)))))))
+            ;only one tree exist for each possible rank  
+            (correct-rts! h (fi-heap-minref h) rtsvec)))))
+
 
 ;; Returns a new heap after joining two heaps
 (define (fi-meld h1 h2)

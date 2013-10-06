@@ -7,6 +7,8 @@
     (test-case
       "Checking makeheap creates a opaque structure"
       (define n (node 1 #f #() #f))
+      (set-node-left! n n)
+      (set-node-right! n n)
       (check-false (equal? (fi-heap n (vector (vector n)) 1) (fi-makeheap 1))))
 
     (test-case
@@ -32,7 +34,7 @@
        (set! h (fi-insert h 4))
        (set! h (fi-insert h 5))
        (fi-deletemin! h)
-       (define n (vector-ref (vector-ref (fi-heap-roots h) 2) 0))
+       (define n (fi-heap-minref h))
        (define c1 (vector-ref (fi-node-children n) 1))
        (define c2 (vector-ref (fi-node-children c1) 0))
        (fi-delete! h c2)
