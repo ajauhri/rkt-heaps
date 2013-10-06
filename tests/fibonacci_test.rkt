@@ -20,7 +20,7 @@
        (set! h (fi-insert h 4))
        (set! h (fi-insert h 5))
        (fi-deletemin! h)
-       (define n (vector-ref (fi-node-children (vector-ref (vector-ref (fi-heap-roots h) 2) 0)) 0))
+       (define n (vector-ref (fi-node-children (fi-heap-minref h) 0)))
        (fi-decrement! h n 2) 
        (fi-delete! h n)
        (check-eq? 2 (fi-findmin h))))
@@ -84,4 +84,16 @@
        (check-false (node-marked n))
        (fi-deletemin! h)
        (check-eq? 5 (fi-findmin h))))))
+
+
+
+
+(define h (fi-meld (fi-makeheap 1) (fi-makeheap 2)))
+(define h (fi-insert h 3))
+(fi-deletemin! h)
+(fi-deletemin! h)
+(fi-findmin h)
+(define h (fi-insert h 4))
+(define h (fi-insert h 5))
+ 
 

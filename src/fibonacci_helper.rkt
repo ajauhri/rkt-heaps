@@ -35,7 +35,7 @@
   (let* ((nodeleft (node-left noderef))
          (noderight (node-right noderef)))
     (set-node-right! nodeleft noderight)
-    (set-node-left! noderight noderight)
+    (set-node-left! noderight nodeleft)
     (set-node-left! noderef noderef)
     (set-node-right! noderef noderef)))
 
@@ -53,4 +53,5 @@
             ([n (in-vector nodevec)])
             (if (eq? n noderef) res
               (vector-append res (vector n)))))
+
 
