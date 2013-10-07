@@ -19,7 +19,7 @@
 
 (require "fibonacci_helper.rkt")
 
-(provide fi-makeheap fi-findmin fi-insert! fi-deletemin! fi-meld! fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent fi-node-left fi-node-right (struct-out node) (struct-out fi-heap))
+(provide fi-makeheap fi-findmin fi-insert! fi-deletemin! fi-meld! fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent fi-node-left fi-node-right)
 
 ;; Returns a new fibonacci heap containing only one number
 (define (fi-makeheap val)

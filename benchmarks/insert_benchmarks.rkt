@@ -37,12 +37,12 @@
                                      create-insert-timing-vec
                                      make-bi-heap 
                                      bi-time-insert 
-                                     constant) #:color 4 #:label "binary-insert" #:x-min (+ ssize ssize) #:style 'dot)
+                                     logarithmic) #:color 4 #:label "binary-insert" #:x-min (+ ssize ssize) #:style 'dot)
                (lines (get-plot-data ssize esize 
                                      create-insert-timing-vec
                                      make-bino-heap 
                                      bino-time-insert 
-                                     constant) #:color 1 #:label "binomial-insert" #:x-min (+ ssize ssize) #:style 'short-dash)
+                                     logarithmic) #:color 1 #:label "binomial-insert" #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize
                                      create-insert-timing-vec
                                      make-fi-heap 
