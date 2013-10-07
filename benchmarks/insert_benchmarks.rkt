@@ -18,7 +18,7 @@
 
 (define (fi-time-insert h)
   (let ((i (random R)))
-   (let ((start (current-inexact-milliseconds)) (r (fi-insert h i)) (end (current-inexact-milliseconds)))
+   (let ((start (current-inexact-milliseconds)) (r (fi-insert! h i)) (end (current-inexact-milliseconds)))
     (cons r (- end start)))))
 
 
@@ -45,7 +45,7 @@
                                      constant) #:color 1 #:label "binomial-insert" #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize
                                      create-insert-timing-vec
-                                     make-scraggly-heap 
+                                     make-fi-heap 
                                      fi-time-insert 
                                      constant) #:color 2 #:label "fibonacci-insert" #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Average time (ms)/(constant)" (format "insert_~a_~a.pdf" ssize esize) 'pdf))

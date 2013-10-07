@@ -41,7 +41,7 @@
                                      logarithmic) #:color 1 #:label "binomial-deletemin"  #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize 
                                      create-deletemin-timing-vec
-                                     make-scraggly-heap 
+                                     make-fi-heap 
                                      fi-time-deletemin 
                                      logarithmic) #:color 2 #:label "fibonacci-deletemin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "deletemin_~a_~a.pdf" ssize esize) 'pdf))

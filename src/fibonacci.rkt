@@ -1,24 +1,25 @@
 #lang racket 
 ;; Core functions that implement Fibonacci heaps. Developed by Michael L. Fredman and Robert E. Tarjan in 1984. Core functions and amortized costs are as follows:
-;; makeheap       - creates a Fibonacci heap with the number value provided. Amortized cost is O(1)
-;; findmin        - returns the minimum value in the heap. Amortized cost is O(1)
-;; insert!        - adds a number value to the heap. Amortized cost is O(1)
-;; deletemin!     - removes the reference of the node with the min value. Amortized cost is O(log n)
-;; meld           - melds two heaps into a new heap, Amortized cost is O(1)
-;; decrement!     - decrements the value of the node by delta. Amortized cost is O(1)
-;; delete!        - deletes a node from the heap. Amortized cost is O(log n)
+;; fi-makeheap       - creates a Fibonacci heap with one value. Amortized cost is O(1)
+;; fi-findmin        - returns the minimum value in the heap. Amortized cost is O(1)
+;; fi-insert!        - adds a number value to the heap. Amortized cost is O(1)
+;; fi-deletemin!     - removes the reference of the node with the min value. Amortized cost is O(log n)
+;; fi-meld!          - melds two heaps into a new heap, Amortized cost is O(1)
+;; fi-decrement!     - decrements the value of the node by delta. Amortized cost is O(1)
+;; fi-delete!        - deletes a node from the heap. Amortized cost is O(log n)
 
 ;; Additional functions:
-;; heap-minref    - gives the reference to min node in the heap 
-;; heap-roots     - returns a vector with references to all roots in the heap (based on the rank)
-;; heap-size      - gives the number of number values inserted in the heap
-;; node-val       - gives the value stored in the node
-;; node-children  - returns a vector of all child node references in the node
-;; node-parent    - returns reference to the parent node
+;; fi-heap-minref    - gives the reference to min node in the heap 
+;; fi-heap-size      - gives the number of number values inserted in the heap
+;; fi-node-val       - gives the value stored in the node
+;; fi-node-children  - returns a vector of all child node references in the node
+;; fi-node-parent    - returns reference to the parent node
+;; fi-node-left      - returns reference to node's left node
+;; fi-node-right     - returns reference to node's right node
 
 (require "fibonacci_helper.rkt")
 
-(provide fi-makeheap fi-findmin fi-insert fi-deletemin! fi-meld fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent (struct-out node) (struct-out fi-heap))
+(provide fi-makeheap fi-findmin fi-insert! fi-deletemin! fi-meld! fi-decrement! fi-delete! fi-heap-minref fi-heap-size fi-node-val fi-node-children fi-node-parent fi-node-left fi-node-right (struct-out node) (struct-out fi-heap))
 
 ;; Returns a new fibonacci heap containing only one number
 (define (fi-makeheap val)
@@ -35,18 +36,16 @@
         (else (node-val (fi-heap-minref h)))))
 
 ;; Inserts a number to an existing heap
-(define (fi-insert h val)
-  (cond ((not (fi-heap? h)) (raise-argument-error 'fi-insert "fi-heap?" 0 h val))
-        ((not (number? val)) (raise-argument-error 'fi-insert "number?" 1 h val))
+(define (fi-insert! h val)
+  (cond ((not (fi-heap? h)) (raise-argument-error 'fi-insert! "fi-heap?" 0 h val))
+        ((not (number? val)) (raise-argument-error 'fi-insert! "number?" 1 h val))
         ((= (fi-heap-size h) 0) (fi-makeheap val))
-        (else (fi-meld h (fi-makeheap val)))))
+        (else (fi-meld! h (fi-makeheap val)))))
 
 ;; Modifies the heap provided and its nodes
 ;; Commentary:
-;; - this procedure mutates node->parent & node->children of the previously defined nodes in the heap
-;; - since deletemin is the only time root vectors are properly sorted as per their rank, we create a vector of size (log n) such that all nodes 
-;;   (after finding the unique w.r.t. rank) are put in the right slot of the rank vector
-
+;; - essential to find the min first and then merge trees with same rank such that the recursive method `correct-rts!`'s termination condition can be set
+;; - operations makes sure that for a rank `i`, there is only one root node in the heap 
 (define (fi-deletemin! h)
   (cond ((not (fi-heap? h)) (raise-argument-error 'fi-deletemin! "fi-heap?" h))
         ((= (fi-heap-size h) 0) (raise-type-error 'fi-deletemin! "node" (fi-heap-minref h)))
@@ -82,14 +81,13 @@
                        (cond ((eq? (node-right noderef) (fi-heap-minref h)) (void))
                              (else (correct-rts! h (node-right noderef) rtsvec)))))))
 
-            ;only one tree exist for each possible rank  
             (correct-rts! h (fi-heap-minref h) rtsvec)))))
 
 
 ;; Returns a new heap after joining two heaps
-(define (fi-meld h1 h2)
-  (cond ((not (fi-heap? h1)) (raise-argument-error 'fi-meld "fi-heap?" 0 h1 h2))
-        ((not (fi-heap? h2)) (raise-argument-error 'fi-meld "fi-heap?" 1 h1 h2))
+(define (fi-meld! h1 h2)
+  (cond ((not (fi-heap? h1)) (raise-argument-error 'fi-meld! "fi-heap?" 0 h1 h2))
+        ((not (fi-heap? h2)) (raise-argument-error 'fi-meld! "fi-heap?" 1 h1 h2))
         (else
           (let* ((h1min (fi-heap-minref h1))
                  (h2min (fi-heap-minref h2))
@@ -106,7 +104,6 @@
 
 ;; Decrements a value of the node specified in the heap
 ;; Commentary:
-;; - modifies the roots and min, if needed, of the heap argument 
 ;; - if heap condition is violated, then parent of the node is checked and if already marked, it is removed. This happens recursively
 (define (fi-decrement! h noderef delta)
   (cond ((not (fi-heap? h)) (raise-argument-error 'fi-decrement! "fi-heap?" 0 h noderef delta))
@@ -148,3 +145,9 @@
 
 (define (fi-node-parent n)
   (node-parent n))
+
+(define (fi-node-left n)
+  (node-left n))
+
+(define (fi-node-right n)
+  (node-right n))

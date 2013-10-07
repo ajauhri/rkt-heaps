@@ -17,10 +17,10 @@
 
     (test-case
       "checking findmin, decrement! and delete!" 
-      (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2)))) 
-       (set! h (fi-insert h 3))
-       (set! h (fi-insert h 4))
-       (set! h (fi-insert h 5))
+      (let ((h (fi-meld! (fi-makeheap 1) (fi-makeheap 2)))) 
+       (set! h (fi-insert! h 3))
+       (set! h (fi-insert! h 4))
+       (set! h (fi-insert! h 5))
        (fi-deletemin! h)
        (define n (vector-ref (node-children (fi-heap-minref h)) 1)) 
        (fi-decrement! h n 2) 
@@ -29,10 +29,10 @@
 
     (test-case
       "parent gets marked when one of its children are deleted"
-      (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2))))
-       (set! h (fi-insert h 3))
-       (set! h (fi-insert h 4))
-       (set! h (fi-insert h 5))
+      (let ((h (fi-meld! (fi-makeheap 1) (fi-makeheap 2))))
+       (set! h (fi-insert! h 3))
+       (set! h (fi-insert! h 4))
+       (set! h (fi-insert! h 5))
        (fi-deletemin! h)
        (define n (fi-heap-minref h))
        (define c1 (vector-ref (fi-node-children n) 1))
@@ -42,10 +42,10 @@
 
     (test-case
       "If heap property is violated during decrement, parent's vector of children is updated correctly"
-      (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2))))
-       (set! h (fi-insert h 3))
-       (set! h (fi-insert h 4))
-       (set! h (fi-insert h 5))
+      (let ((h (fi-meld! (fi-makeheap 1) (fi-makeheap 2))))
+       (set! h (fi-insert! h 3))
+       (set! h (fi-insert! h 4))
+       (set! h (fi-insert! h 5))
        (fi-deletemin! h)
        (define n (fi-heap-minref h))
        (define c1 (vector-ref (fi-node-children n) 1))
@@ -57,16 +57,16 @@
       "if heap of size 1, used with deletemin is eventually of size 0, it should still pass through insert"
       (let ((h (fi-makeheap 1)))
        (fi-deletemin! h)
-       (set! h (fi-insert h 2))
+       (set! h (fi-insert! h 2))
        (check-true (eq? (fi-heap-size h) 1))
        (check-true (eq? (fi-findmin h) 2))))
 
     (test-case
       "If two children of a root node are deleted, it shouldn't be marked"
-      (let ((h (fi-meld (fi-makeheap 1) (fi-makeheap 2))))
-       (set! h (fi-insert h 3))
-       (set! h (fi-insert h 4))
-       (set! h (fi-insert h 5))
+      (let ((h (fi-meld! (fi-makeheap 1) (fi-makeheap 2))))
+       (set! h (fi-insert! h 3))
+       (set! h (fi-insert! h 4))
+       (set! h (fi-insert! h 5))
        (fi-deletemin! h)
        (define n (fi-heap-minref h))
        (define c1 (vector-ref (fi-node-children n) 0))

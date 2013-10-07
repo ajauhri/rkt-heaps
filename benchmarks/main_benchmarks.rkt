@@ -2,23 +2,31 @@
 #lang racket
 (require plot data/heap "../src/binomial.rkt" "../src/fibonacci.rkt" racket/cmdline)
 
-(provide plot-graphs random-walk make-rand-vector make-bi-heap make-bino-heap make-scraggly-heap get-plot-data logarithmic linear constant)
+(provide random-walk make-rand-vector make-bi-heap make-bino-heap make-fi-heap get-plot-data logarithmic linear constant)
 
 (define R 4294967087)
 
-(define (random-walk h step n)
-  (cond ((and (eq? n #f) (>= (vector-length (fi-heap-roots h)) (+ step 1))) (fi-heap-minref h))
-        ((>= (vector-length (fi-heap-roots h)) (+ step 1)) n)
-        ((eq? n #f) (cond ((>= (random) 0.8) 
-                           (random-walk h (+ step 1) (fi-heap-minref h)))
-                          (else (let* ((nonemptyrts (for/fold ([res #()])
-                                                              ([i (in-range (vector-length (fi-heap-roots h)))])
-                                                              (if (> (vector-length (vector-ref (fi-heap-roots h) i)) 0) (vector-append res i) res)))
-                                       (ind (vector-ref nonemptyrts (random (vector-length nonemptyrts)))))
-                                  (random-walk h (+ step 1) (vector-ref (vector-ref (fi-heap-roots h) ind) 0))))))
-        ((eq? (vector-length (fi-node-children n)) 0) (random-walk h (vector-length (fi-heap-roots h)) n))
-        (else (let ((child (vector-ref (fi-node-children n) (random (vector-length (fi-node-children n))))))
-               (random-walk h (+ step 1) child)))))
+(define (fib-seq vec cur next remaining)
+  (if (= 0 remaining)
+    vec
+    (fib-seq (vector-append vec (vector next)) next (+ cur next) (- remaining 1))))
+
+(define (random-walk h ri)
+  (let* ((root (for/fold ([n (fi-heap-minref h)])
+                        ([i (in-range ri)])
+                        (fi-node-right n)))
+        (maxrnk (inexact->exact (ceiling (/ (log (fi-heap-size h)) (log 2)))))
+        (fibvec (fib-seq (vector 0) 0 1 (+ 1 maxrnk))) ;+1 may turn out to be a hack
+        (depth (vector-ref fibvec (+ ri 1)))) ; max depth of a path is F_[d+2], where F_i is the ith fibonacci number. The indicies adjustment makes it (ri+1)
+   
+    (define (random-depth-traversal n step depth)
+      (cond ((= step depth) n)
+            ((> (vector-length (fi-node-children n)) 0) 
+             (let ((childind (random (vector-length (fi-node-children n)))))
+              (random-depth-traversal (vector-ref (fi-node-children n) childind) (+ step 1) depth)))
+            (else n)))
+    
+    (random-depth-traversal root 1 depth)))
 
 (define (make-rand-vector s) 
   (if (= s 0) (vector (random R))
@@ -32,15 +40,15 @@
 (define (make-bino-heap v)
   (for/fold ([h (bino-makeheap (random R))]) ([val (in-vector v)]) (bino-insert h val)))
 
-(define (make-scraggly-heap v [count 0] [h (fi-makeheap (random R))])
+(define (make-fi-heap v [count 0] [h (fi-makeheap (random R))])
   (cond ((= count (vector-length v)) h)
         (else (cond ((>= (random) 0.8) (fi-deletemin! h)
-                                       (set! h (fi-insert h (vector-ref v count)))
-                                       (set! h (fi-insert h (random R)))
-                                       (make-scraggly-heap v (+ count 1) h))
-                    (else (set! h (fi-insert h (vector-ref v count)))
-                          (fi-decrement! h (random-walk h 0 #f) (random R))
-                          (make-scraggly-heap v (+ count 1) h))))))
+                                       (set! h (fi-insert! h (vector-ref v count)))
+                                       (set! h (fi-insert! h (random R)))
+                                       (make-fi-heap v (+ count 1) h))
+                    (else (set! h (fi-insert! h (vector-ref v count)))
+                          (fi-decrement! h (random-walk h (random (+ 1 (inexact->exact (ceiling (/ (log (fi-heap-size h)) (log 2))))))) (random R))
+                          (make-fi-heap v (+ count 1) h))))))
 
 (define (bi-time-meld h1 h2)
   (let ((hcopy (heap-copy h1)))
@@ -52,7 +60,7 @@
    (- end start)))
 
 (define (fi-time-meld h1 h2)
-  (let ((start (current-inexact-milliseconds)) (r (fi-meld h1 h2)) (end (current-inexact-milliseconds)))
+  (let ((start (current-inexact-milliseconds)) (r (fi-meld! h1 h2)) (end (current-inexact-milliseconds)))
    (- end start)))
 
 (define (time-decrement h [n (random-walk h 0 #f)] [delta (random R)])
@@ -61,8 +69,8 @@
 
 (define (time-delete h [n (random-walk h 0 #f)])
   (let ((start (current-inexact-milliseconds)) (r (fi-delete! h n)) (end (current-inexact-milliseconds)))
-   (fi-insert h (random R))
-   (fi-insert h (random R))
+   (fi-insert! h (random R))
+   (fi-insert! h (random R))
    (- end start)))
 
 
@@ -114,15 +122,15 @@
                (lines (get-plot-data ssize esize make-bi-heap bi-time-meld logarithmic) #:color 4 #:label "binary-meld"  #:x-min (+ ssize ssize) #:style 'dot)
                (lines (get-plot-data ssize esize make-bino-heap bino-time-meld logarithmic) #:color 1 #:label "binomial-meld"  #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize make-bino-heap bino-time-meld linearithmic) #:color 3 #:label "binomial-meld (nlogn)" #:x-min (+ ssize ssize) #:style 'long-dash)
-               (lines (get-plot-data ssize esize make-scraggly-heap fi-time-meld constant) #:color 2 #:label "fibonacci-meld"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+               (lines (get-plot-data ssize esize make-fi-heap fi-time-meld constant) #:color 2 #:label "fibonacci-meld"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "meld_~a_~a.pdf" ssize esize) 'pdf)
 
   (plot-file (list 
-               (lines (get-plot-data ssize esize make-scraggly-heap time-decrement constant) #:color 2 #:label "fibonacci-decrement" #:x-min (+ ssize ssize) #:style 'dot-dash))
+               (lines (get-plot-data ssize esize make-fi-heap time-decrement constant) #:color 2 #:label "fibonacci-decrement" #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "decrement_~a_~a.pdf" ssize esize) 'pdf)
 
 
   (plot-file (list 
-               (lines (get-plot-data ssize esize make-scraggly-heap time-delete logarithmic) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+               (lines (get-plot-data ssize esize make-fi-heap time-delete logarithmic) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "delete_~a_~a.pdf" ssize esize) 'pdf))
 
