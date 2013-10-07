@@ -119,13 +119,6 @@
 (define (plot-graphs ssize esize)
   
   (plot-file (list 
-               (lines (get-plot-data ssize esize make-bi-heap bi-time-meld logarithmic) #:color 4 #:label "binary-meld"  #:x-min (+ ssize ssize) #:style 'dot)
-               (lines (get-plot-data ssize esize make-bino-heap bino-time-meld logarithmic) #:color 1 #:label "binomial-meld"  #:x-min (+ ssize ssize) #:style 'short-dash)
-               (lines (get-plot-data ssize esize make-bino-heap bino-time-meld linearithmic) #:color 3 #:label "binomial-meld (nlogn)" #:x-min (+ ssize ssize) #:style 'long-dash)
-               (lines (get-plot-data ssize esize make-fi-heap fi-time-meld constant) #:color 2 #:label "fibonacci-meld"  #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "meld_~a_~a.pdf" ssize esize) 'pdf)
-
-  (plot-file (list 
                (lines (get-plot-data ssize esize make-fi-heap time-decrement constant) #:color 2 #:label "fibonacci-decrement" #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "decrement_~a_~a.pdf" ssize esize) 'pdf)
 
