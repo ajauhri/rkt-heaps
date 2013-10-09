@@ -6,15 +6,6 @@
 
 (define R 4294967087)
 
-(define (bi-time-findmin h)
-  (let ((start (current-inexact-milliseconds)) (r (heap-min h)) (end (current-inexact-milliseconds)))
-   (heap-add! h (random R))
-   (cons h (- end start))))
-
-(define (bino-time-findmin h)
-  (let ((start (current-inexact-milliseconds)) (r (bino-findmin h)) (end (current-inexact-milliseconds)))
-   (cons (bino-insert h (random R)) (- end start))))
-
 (define (fi-time-findmin h)
   (let ((start (current-inexact-milliseconds)) (r (fi-findmin h)) (end (current-inexact-milliseconds)))
    (cons (fi-insert h (random R)) (- end start))))
@@ -30,17 +21,7 @@
 
 (define (plot-findmin ssize esize)
   (plot-file (list 
-               (lines (get-plot-data ssize esize 
-                                     create-findmin-timing-vec 
-                                     make-bi-heap 
-                                     bi-time-findmin 
-                                     constant) #:color 4 #:label "binary-findmin" #:x-min (+ ssize ssize) #:style 'dot)
-               (lines (get-plot-data ssize esize 
-                                     create-findmin-timing-vec
-                                     make-bino-heap 
-                                     bino-time-findmin
-                                     constant) #:color 1 #:label "binomial-findmin"  #:x-min (+ ssize ssize) #:style 'short-dash)
-               (lines (get-plot-data ssize esize 
+              (lines (get-plot-data ssize esize 
                                      create-findmin-timing-vec
                                      make-fi-heap 
                                      fi-time-findmin

@@ -17,7 +17,7 @@
 
 (define (fi-time-findmin h)
   (let ((start (current-inexact-milliseconds)) (r (fi-findmin h)) (end (current-inexact-milliseconds)))
-   (cons (fi-insert h (random R)) (- end start))))
+   (cons (fi-insert! h (random R)) (- end start))))
 
 (define (create-findmin-timing-vec ssize esize heap-create-method time-method opts)
   (for/vector #:length (/ esize ssize) ([i (in-range ssize (+ esize ssize) ssize)])

@@ -58,7 +58,7 @@
             (for ([i (in-vector minchildren)])
                  (add-node-to-dll! h i))
             (set-fi-heap-minref! h (node-left minref)) ;set an arbitrary node as min
-            (remove-node-from-dll! h minref)
+            (remove-node-from-dll! minref)
             
             (define (get-min h noderef minref)
               (cond ((eq? noderef (fi-heap-minref h)) minref)
@@ -72,14 +72,16 @@
             (define (correct-rts! h noderef rtsvec)
               (let* ((nodernk (vector-length (node-children noderef)))
                      (nodernkvec (vector-ref rtsvec nodernk)))
-                (cond ((> (vector-length nodernkvec) 0)
-                       (let ((nodeuped (combine! h noderef (vector-ref nodernkvec 0))))
+                (cond ((and (= (vector-length nodernkvec) 1) (not (eq? (vector-ref nodernkvec 0) noderef)))
+                       (let ((parent (combine! h (vector-ref nodernkvec 0) noderef)))
+                        (when (> (vector-length (node-children parent)) (+ nodernk 1)) (raise-result-error 'correct-rts! "rank should increase by one" (format "got ~a instead of ~a" (vector-length (node-children parent) (+ nodernk 1)))))
                         (vector-set! rtsvec nodernk (vector-drop nodernkvec 1))
-                        (correct-rts! h nodeuped rtsvec)))
+                        (correct-rts! h parent rtsvec)))
                       ((= (vector-length nodernkvec) 0) 
                        (vector-set! rtsvec nodernk (vector noderef))
                        (cond ((eq? (node-right noderef) (fi-heap-minref h)) (void))
-                             (else (correct-rts! h (node-right noderef) rtsvec)))))))
+                             (else (correct-rts! h (node-right noderef) rtsvec))))
+                      (else (void)))))
 
             (correct-rts! h (fi-heap-minref h) rtsvec)))))
 

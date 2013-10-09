@@ -76,3 +76,4 @@
        (check-false (node-marked n))
        (fi-deletemin! h)
        (check-eq? 4 (fi-findmin h))))))
+
