@@ -55,17 +55,20 @@
                  (rtsvec (make-vector maxrnk (vector)))
                  (minref (fi-heap-minref h))
                  (minchildren (node-children minref)))
-            (for ([i (in-vector minchildren)])
-                 (add-node-to-dll! h i))
+            (for ([n (in-vector minchildren)])
+                 (set-node-parent! n #f)
+                 (set-node-marked! n #f)
+                 (add-node-to-dll! h n))
             (set-fi-heap-minref! h (node-left minref)) ;set an arbitrary node as min
             (remove-node-from-dll! minref)
-            
+            (set-node-children! minref #())
+
             (define (get-min h noderef minref)
               (cond ((eq? noderef (fi-heap-minref h)) minref)
                     ((< (node-val noderef) (node-val minref)) 
                      (get-min h (node-right noderef) noderef))
                     (else (get-min h (node-right noderef) minref))))
-            
+
             (set-fi-heap-minref! h (get-min h (node-right (fi-heap-minref h)) (fi-heap-minref h)))
             (set-fi-heap-size! h (- (fi-heap-size h) 1))     
 
@@ -82,8 +85,16 @@
                        (cond ((eq? (node-right noderef) (fi-heap-minref h)) (void))
                              (else (correct-rts! h (node-right noderef) rtsvec))))
                       (else (void)))))
+            (correct-rts! h (fi-heap-minref h) rtsvec)
+            
+            (define (check-rts h n)
+              (cond ((eq? n (fi-heap-minref h))
+                     (when (not (eq? n (node-left (node-right n)))) (raise-result-error 'check-rts "not a valid circular list" (format "got ~a pointing to ~a, but ~a pointing to ~a" (node-val n) (node-val (node-right n)) (node-val (node-right n)) (node-val (node-left (node-right n))))))
+                     (void))
+                    (else (when (not (eq? n (node-left (node-right n)))) (raise-result-error 'check-rts "not a valid circular list" (format "got ~a pointing to ~a, but ~a pointing to ~a" (node-val n) (node-val (node-right n)) (node-val (node-right n)) (node-val (node-left (node-right n))))))
+                          (check-rts h (node-right n)))))
+            (check-rts h (node-right (fi-heap-minref h)))))))
 
-            (correct-rts! h (fi-heap-minref h) rtsvec)))))
 
 
 ;; Returns a new heap after joining two heaps
@@ -119,8 +130,8 @@
                       (add-node-to-dll! h noderef)
                       (set-node-parent! noderef #f)
                       (set-node-marked! noderef #f)
-                      (check-parents! h parent noderef)
-                      (when (< (node-val noderef) (fi-findmin h)) (set-fi-heap-minref! h noderef)))))))) 
+                      (check-parents! h parent noderef))))
+              (when (< (node-val noderef) (fi-findmin h)) (set-fi-heap-minref! h noderef))))) 
 
 ;; Decrements noderef's value below the min of the heap, and calls deletemin
 (define (fi-delete! h noderef)
@@ -135,6 +146,7 @@
                     ; m=-1; n=0; delta=2
                     ; m=0; n=0; delta=1
                     ; m=-4; n=-3; delta=2, works!!!
+                    ; make node val less than the heap's min value
                     (else (let ((delta (- (node-val noderef) (- (fi-findmin h) 1))))
                            (fi-decrement! h noderef delta)
                            (fi-deletemin! h)))))))
@@ -153,3 +165,16 @@
 
 (define (fi-node-right n)
   (node-right n))
+
+(define (print h n)
+  (define (print-children n d)
+    (display "\n")
+    (for/vector ([i (in-vector (node-children n))]) 
+                (when (not (eq? (node-left i) (node-right i))) (raise-result-error 'print-children "pointers corruppted" i))
+                (display (format "val:~a depth:~a " (node-val i) d)) (print-children i (+ d 1))))
+  
+  (cond ((eq? n (fi-heap-minref h)) (display (format "\nroot:~a" (node-val n)))
+                                    (print-children n 1))
+        (else (display (format "\nroot:~a" (node-val n)))
+              (print-children n 1)
+              (print h (node-right n)))))

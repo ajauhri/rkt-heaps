@@ -16,7 +16,7 @@
                          ([i (in-range ri)])
                          (fi-node-right n)))
          (maxrnk (inexact->exact (ceiling (/ (log (fi-heap-size h)) (log 2)))))
-         (fibvec (fib-seq (vector 0) 0 1 (+ 1 maxrnk))) ;+1 may turn out to be a hack
+         (fibvec (fib-seq (vector 0) 0 1 (+ 1 maxrnk))) ; +1 may turn out to be a hack
          (depth (vector-ref fibvec (+ ri 1)))) ; max depth of a path is F_[d+2], where F_i is the ith fibonacci number. The indicies adjustment makes it (ri+1)
 
     (define (random-depth-traversal n step depth)
@@ -53,16 +53,6 @@
   
   (makeheap v 1 h))
 
-(define (time-decrement h [n (random-walk h 0 #f)] [delta (random R)])
-  (let ((start (current-inexact-milliseconds)) (r (fi-decrement! h n delta)) (end (current-inexact-milliseconds)))
-   (- end start)))
-
-(define (time-delete h [n (random-walk h 0 #f)])
-  (let ((start (current-inexact-milliseconds)) (r (fi-delete! h n)) (end (current-inexact-milliseconds)))
-   (fi-insert! h (random R))
-   (fi-insert! h (random R))
-   (- end start)))
-
 (define (logarithmic n) (/ (log n) (log 2)))
 (define (linearithmic n) (/ (* (log n) n) (log 2)))
 (define (constant n) 1)
@@ -78,15 +68,3 @@
      (for/fold ([lst (list (vector 0 0))]) ([i (in-range ssize (+ esize ssize) ssize)]
                                             [j (in-range (vector-length v))])
                (cons (vector i (vector-ref v j)) lst)))))
-
-(define (plot-graphs ssize esize)
-
-  (plot-file (list 
-               (lines (get-plot-data ssize esize make-fi-heap time-decrement constant) #:color 2 #:label "fibonacci-decrement" #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "decrement_~a_~a.pdf" ssize esize) 'pdf)
-
-
-  (plot-file (list 
-               (lines (get-plot-data ssize esize make-fi-heap time-delete logarithmic) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "delete_~a_~a.pdf" ssize esize) 'pdf))
-

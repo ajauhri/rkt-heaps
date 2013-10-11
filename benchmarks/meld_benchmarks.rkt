@@ -8,14 +8,14 @@
 
 (define (bi-time-meld h1 h2)
   (let ((start (current-inexact-milliseconds)) (r (heap-add-all! h1 h2)) (end (current-inexact-milliseconds)))
-   (cons h (- end start))))
+   (cons r (- end start))))
 
 (define (bino-time-meld h1 h2)
   (let ((start (current-inexact-milliseconds)) (r (bino-meld h1 h2)) (end (current-inexact-milliseconds)))
    (cons r (- end start))))
 
 (define (fi-time-meld h1 h2)
-  (let ((start (current-inexact-milliseconds)) (r (fi-meld h1 h2)) (end (current-inexact-milliseconds)))
+  (let ((start (current-inexact-milliseconds)) (r (fi-meld! h1 h2)) (end (current-inexact-milliseconds)))
    (cons r (- end start))))
 
 (define (create-meld-timing-vec ssize esize heap-create-method time-method opts)
