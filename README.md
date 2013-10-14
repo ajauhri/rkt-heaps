@@ -7,8 +7,6 @@ This is a functional implementation of heaps viz. Binomial and Fibonacci. For de
 * [Fredman & Tarjan. "Fibonacci heaps and their uses in improved network optimization algorithms"](http://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/fibonacci%20heaps.pdf)
 * [Vuillemin, "A data structure for manipulating priority queues"](http://www.cl.cam.ac.uk/teaching/1011/AlgorithII/1978-Vuillemin-queues.pdf)
 
-The implementation for Binomial heaps is purely functional whereas for Fibonacci heaps there exists destructive (mutating) operations.
-
 Brief description
 ----
 
@@ -42,12 +40,10 @@ Benchmarks
 Benchmarks can be easily generated for all core functions using files [here](https://github.com/ajauhri/rkt-heaps/tree/master/benchmarks). Any one of such files can be run with following arguments:
 * ssize - the starting size of the heap in the benchmark
 * esize - the largest size of the heap to be included in the benchmark
-* step - increment in the size of heap for the subsequent step 
-* freq - # of execution cycles to be run for any operation 
 
-For example, `./binomial_benchmarks.rkt 10 100 10 10` will have timing of operations measured over heap sizes - 10 20 30 40 50 60 70 80 90 100, for all operations 10 times, and then take its mean. It will generate a pdf file titled as `binomial_benchmarks_10_100_10_10.pdf`.
+For example, `./delete_benchmarks.rkt 10 100` will have timing of operations measured over heap sizes - 10 20 30 40 50 60 70 80 90 100 over the total expected cost (in this case it is `O(log n)`). It will generate a pdf file titled as `delete_benchmarks_10_100.pdf`.
 
-Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison. For instance, `Fibonacci` heap implementations provides almost 100x speedup for `heap-add-all!` operation. The equivalent for this API is called the `meld` operation for both `Binomial` and `Fibonacci` heaps.
+Benchmark for existing racket library [Binary heap](http://pre.racket-lang.org/docs/html/data/Binary_Heaps.html) has been added for comparison. 
 
 Some pre-generated benchmarks can be viewed here:
 
