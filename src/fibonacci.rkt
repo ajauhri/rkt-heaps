@@ -1,5 +1,5 @@
 #lang racket 
-;; Core functions that implement Fibonacci heaps. Developed by Michael L. Fredman and Robert E. Tarjan in 1984. Core functions and amortized costs are as follows:
+;; Core operations that implement Fibonacci heaps. Developed by Michael L. Fredman and Robert E. Tarjan in 1984. Core functions and amortized costs are as follows:
 ;; fi-makeheap       - creates a Fibonacci heap with one value. Amortized cost is O(1)
 ;; fi-findmin        - returns the minimum value in the heap. Amortized cost is O(1)
 ;; fi-insert!        - adds a number value to the heap. Amortized cost is O(1)
@@ -8,7 +8,7 @@
 ;; fi-decrement!     - decrements the value of the node by delta. Amortized cost is O(1)
 ;; fi-delete!        - deletes a node from the heap. Amortized cost is O(log n)
 
-;; Additional functions:
+;; Additional operations:
 ;; fi-heap-minref    - gives the reference to min node in the heap 
 ;; fi-heap-size      - gives the number of number values inserted in the heap
 ;; fi-node-val       - gives the value stored in the node
