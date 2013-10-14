@@ -29,22 +29,22 @@
 
 (define (plot-meld ssize esize)
   (plot-file (list 
-               (lines (get-plot-data ssize esize 
-                                     create-meld-timing-vec
-                                     make-bi-heap 
-                                     bi-time-meld
-                                     logarithmic) #:color 4 #:label "binary-insert" #:x-min (+ ssize ssize) #:style 'dot)
+               ;(lines (get-plot-data ssize esize 
+               ;                      create-meld-timing-vec
+               ;                      make-bi-heap 
+               ;                      bi-time-meld
+               ;                      logarithmic) #:color 4 #:label "binary-meld" #:x-min (+ ssize ssize) #:style 'dot)
                (lines (get-plot-data ssize esize 
                                      create-meld-timing-vec
                                      make-bino-heap 
                                      bino-time-meld
-                                     logarithmic) #:color 1 #:label "binomial-insert" #:x-min (+ ssize ssize) #:style 'short-dash)
+                                     logarithmic) #:color 1 #:label "binomial-meld (eager)" #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize
                                      create-meld-timing-vec
                                      make-fi-heap 
                                      fi-time-meld
-                                     logarithmic) #:color 2 #:label "fibonacci-insert" #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(constant)" (format "insert_~a_~a.pdf" ssize esize) 'pdf))
+                                     logarithmic) #:color 2 #:label "fibonacci-meld" #:x-min (+ ssize ssize) #:style 'dot-dash))
+             #:x-label "n" #:y-label "Average time (ms)/(Amortized cost)" #:title "Average time over n melds; each meld resulting in a heap sized n"(format "meld_~a_~a.pdf" ssize esize) 'pdf))
 
 (command-line 
   #:args

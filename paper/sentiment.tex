@@ -1,0 +1,62 @@
+\documentclass[12pt,a4paper,oneside]{article}
+
+\usepackage{amsfonts} % if you want blackboard bold symbols e.g. for real numbers
+\usepackage{graphicx} % if you want to include jpeg or pdf pictures
+\usepackage{hyperref}
+\usepackage{float}
+
+
+\usepackage{titling}
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+
+\begin{document}
+
+\title{Sentiment Analysis Report}
+\author{}
+
+\maketitle
+%%%%%%%%%% MAIN TEXT STARTS HERE %%%%%%%%%%
+%%%%%%%%%% SAMPLE CHAPTER %%%%%%%%%%
+\section{Sentiment analysis on IMDB user reviews}
+IMDB movies have a comprehensive set of reviews that have been contributed for movies by several users. These reviews are usually very expressive and
+contain highly subjective opinions of the users on several aspects of the movies. The authors in Maas et al (2011) have crawled a huge corpus of movie reviews annotated with their polarity information (positive, negative). We used this dataset to build classifiers for sentiment polarity detection using a combination of textual features extracted from the reviews. Prior to building our feature representation, we performed some pre-processing of the text to remove low frequency words and some common stopwords. Some of the features that we experimented with in the initial phase are:
+
+\begin{enumerate}
+\item Bag of words (BOW) features - Most of the current work on sentiment extraction use BOW as baseline features, and in many cases it outperforms sophisticated context based features. In our classifier too, we used the BOW representation as a baseline and tested the classifier with the inclusion of other features.
+
+\item Part of Speech Information - Many studies have reported that the sentiment bearing words have a high probability of being adjectives, verbs and some specific nouns. We converted the several different types of POS tags into a common base form. For example, (VBZ,VB) were mapped to a common form verb.
+These featuers were included along with the original BOW features.
+
+\item Categorical proportional Difference (CPD) - The authors in O'Keefe et al (2009) argue that there could be some unigrams present exclusively in documents of a certain polarity. A measure similar to TF-IDF that takes into account the relative frequency of the unigram across both types of documents (positive, negative) would give a better score on the polarity information of the unigram. The CPD of a unigram is computed by
+
+\begin{equation}
+\frac{|PositiveDF - NegativeDF|}{PositiveDF - NegativeDF}
+\end{equation}
+Instead of using the absolute frequencies of the unigrams as in the BOW model, we used the CPD score of each unigram in our feature representation.
+
+\end{enumerate}
+
+We used about 10,000 reviews for training and we tested our model on about 2,000 reviews. A Naive Bayes implementation was used to perform training with 10
+rounds of cross validation. Our best result was obtained using the CPD features (83.3 \% precision) which only slightly outperforms the BOW model (82.8 \%precision). 
+\end{document} 
+ 
+\section{References}
+\begin{enumerate}
+\item Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew Y. Ng, and Christopher Potts. (2011). Learning Word Vectors for Sentiment Analysis. The 49th Annual Meeting of the Association for Computational Linguistics (ACL 2011).
+\item T. O’Keefe and I. Koprinska, “Feature Selection and Weighting 
+Methods in Sentiment Analysis,” The 14th Australasian Document Computing Symposium, 2009
+\end{enumerate}
+
+
+
+
+
+
+
+
+
