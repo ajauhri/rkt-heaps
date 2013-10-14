@@ -26,7 +26,7 @@
                        (let ((res (time-method h)))
                         (set! h (car res))
                         (cdr res)))
-                 (* ((car opts) i) i)))))
+                 ((car opts) i)))))
 
 (define (plot-findmin ssize esize)
   (plot-file (list 
@@ -34,18 +34,18 @@
                                      create-findmin-timing-vec 
                                      make-bi-heap 
                                      bi-time-findmin 
-                                     constant) #:color 4 #:label "binary-findmin" #:x-min (+ ssize ssize) #:style 'dot)
+                                     linear) #:color 4 #:label "binary-findmin" #:x-min (+ ssize ssize) #:style 'dot)
                (lines (get-plot-data ssize esize 
                                      create-findmin-timing-vec
                                      make-bino-heap 
                                      bino-time-findmin
-                                     constant) #:color 1 #:label "binomial-findmin"  #:x-min (+ ssize ssize) #:style 'short-dash)
+                                     linear) #:color 1 #:label "binomial-findmin"  #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize 
                                      create-findmin-timing-vec
                                      make-fi-heap 
                                      fi-time-findmin
-                                     constant) #:color 2 #:label "fibonacci-findmin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(constant)" (format "findmin_~a_~a.pdf" ssize esize) 'pdf))
+                                     linear) #:color 2 #:label "fibonacci-findmin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+             #:x-label "n" #:y-label "Totoal time (ms)/(Total expected cost)" (format "findmin_~a_~a.pdf" ssize esize) 'pdf))
 
 
 (command-line 

@@ -17,7 +17,7 @@
                        (let ((res (time-method h)))
                         (set! h (car res))
                         (cdr res)))
-                 (* ((car opts) i) i)))))
+                 ((car opts) i)))))
 
 (define (plot-decrement ssize esize)
   (plot-file (list 
@@ -26,7 +26,7 @@
                                      make-fi-heap
                                      fi-time-decrement
                                      constant) #:color 2 #:label "fibonacci-decrement"  #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(constant)" (format "decrement_~a_~a.pdf" ssize esize) 'pdf))
+             #:x-label "n" #:y-label "Total time (ms)/(Total expected time)" (format "decrement_~a_~a.pdf" ssize esize) 'pdf))
 
 
 (command-line 

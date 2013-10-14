@@ -25,7 +25,7 @@
                                  (h2 (heap-create-method  (make-rand-vector (ceiling (/ (- j 1) 2)))))
                                  (res (time-method h1 h2)))
                             (cdr res)))
-                 (* ((car opts) i) i))))
+                 ((car opts) i))))
 
 (define (plot-meld ssize esize)
   (plot-file (list 
@@ -44,7 +44,7 @@
                                      make-fi-heap 
                                      fi-time-meld
                                      logarithmic) #:color 2 #:label "fibonacci-meld" #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(Amortized cost)" #:title "Average time over n melds; each meld resulting in a heap sized n"(format "meld_~a_~a.pdf" ssize esize) 'pdf))
+             #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" 'pdf))
 
 (command-line 
   #:args

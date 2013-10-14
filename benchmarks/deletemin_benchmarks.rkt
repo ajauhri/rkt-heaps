@@ -25,7 +25,7 @@
                        (let ((res (time-method h)))
                         (set! h (car res))
                         (cdr res)))
-                 (* ((car opts) i) i)))))
+                 ((car opts) i)))))
 
 (define (plot-deletemin ssize esize)
   (plot-file (list 
@@ -34,17 +34,17 @@
                                      make-bi-heap 
                                      bi-time-deletemin 
                                      logarithmic) #:color 4 #:label "binary-deletemin" #:x-min (+ ssize ssize) #:style 'dot)
-               (lines (get-plot-data ssize esize 
-                                     create-deletemin-timing-vec
-                                     make-bino-heap 
-                                     bino-time-deletemin 
-                                     logarithmic) #:color 1 #:label "binomial-deletemin"  #:x-min (+ ssize ssize) #:style 'short-dash)
+              ; (lines (get-plot-data ssize esize 
+              ;                       create-deletemin-timing-vec
+              ;                       make-bino-heap 
+              ;                       bino-time-deletemin 
+              ;                       logarithmic) #:color 1 #:label "binomial-deletemin"  #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize 
                                      create-deletemin-timing-vec
                                      make-fi-heap 
                                      fi-time-deletemin 
-                                     logarithmic) #:color 2 #:label "fibonacci-deletemin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Average time (ms)/(log n)" (format "deletemin_~a_~a.pdf" ssize esize) 'pdf))
+                                     linearthmic) #:color 2 #:label "fibonacci-deletemin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+             #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" (format "deletemin_~a_~a.pdf" ssize esize) 'pdf))
 
 
 (command-line 

@@ -2,7 +2,7 @@
 #lang racket
 (require plot data/heap "../src/binomial.rkt" "../src/fibonacci.rkt" racket/cmdline)
 
-(provide random-walk make-rand-vector make-bi-heap make-bino-heap make-fi-heap get-plot-data logarithmic linear constant linearithmic)
+(provide random-walk make-rand-vector make-bi-heap make-bino-heap make-fi-heap get-plot-data logarithmic linear constant linearithmic quadratic)
 
 (define R 4294967087)
 
@@ -56,6 +56,7 @@
 (define (logarithmic n) (/ (log n) (log 2)))
 (define (linearithmic n) (/ (* (log n) n) (log 2)))
 (define (constant n) 1)
+(define (quadratic n) (* n n))
 (define (linear n) n)
 
 (define (get-plot-data ssize esize
