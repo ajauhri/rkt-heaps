@@ -25,7 +25,7 @@
                        (let ((res (time-method h)))
                         (set! h (car res))
                         (cdr res)))
-                 ((car opts) i)))))
+                 (* ((car opts) i) i)))))
 
 (define (plot-deletemin ssize esize)
   (plot-file (list 
@@ -43,7 +43,7 @@
                                      create-deletemin-timing-vec
                                      make-fi-heap 
                                      fi-time-deletemin 
-                                     linearthmic) #:color 2 #:label "fibonacci-deletemin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+                                     logarithmic) #:color 2 #:label "fibonacci-deletemin"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" (format "deletemin_~a_~a.pdf" ssize esize) 'pdf))
 
 

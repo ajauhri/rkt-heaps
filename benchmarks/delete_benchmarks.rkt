@@ -23,7 +23,7 @@
                                      create-delete-timing-vec
                                      make-fi-heap
                                      fi-time-delete
-                                     logarithmic) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+                                     constant) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" (format "delete_~a_~a.pdf" ssize esize) 'pdf))
 
 (command-line 

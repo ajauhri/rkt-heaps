@@ -2,6 +2,7 @@
 \documentclass{llncs}
 \usepackage{amsmath,amssymb,graphicx}
 \usepackage[ruled,linesnumbered]{algorithm2e}
+\usepackage{standalone}
 \usepackage{algorithmic}
 \usepackage{mdwlist}
 \usepackage{color}
@@ -21,6 +22,7 @@
 \usepackage{enumitem}
 \usepackage{url}
 \usepackage{array}
+\usepackage{pdfpages}
 \setlist{nolistsep}
 \newcommand{\hide}[1]{}
 \usepackage[labelfont=bf]{caption}
@@ -109,11 +111,11 @@ $meld$ eager version works in the manner as described above but for the lazy ver
 Binomial heap in $rkt-heaps$ is an array-based purely functional implementation leveraging Racket's $vectors$ library. Being purely functional ensures there is no mutation of previously created data structures. Although, this leads to anomalies in runtime costs for certain operations like \emph{insert}. With reference to Table \ref{tab:binomialcost}, the total cost for $n$ inserts is linear, \BigO{n}; but in a purely functional implementation, the insert operation cost for $n$ inserts aggregates to \BigO{n^2}. The reason for such an anomaly is due to cloning of heap vector at every insert operation. This is validated in Fig:\ref{fig:bino_anomaly}. The curve \emph{binomial-insert (quadratic)} signifies the divisor(total cost) for the dividend(total time) is quadratic, and therefore the curve has slope zero\footnote{The ratio of total cost and $n^2$ will be constant}. Alternatively, taking the divisor as linear, the total run-time cost depicts a linear increase in cloning the vector, which is to say that $nth$ insertion step clones the $(n-1)th$ heap vector\footnote{Racket's vector API provides \emph{(vector-append $v_1 v_2$ \dots)}, used for cloning, makes fresh copy of all elements of given vectors}. Modifying the structuring of the heap to a doubly linked list(DDL) wherein all roots of trees have pointers to its right and left root nodes is imperative to ensure constant number of steps for each insert (used for analyzing run-time costs in \cite{kozen1992design}). The DDL implementation and cost shall be discussed in later sections of this paper. The array implementation was done out of pedagogical curiosity of the author.
 
 \begin{figure}
-\begin{center}
-	\includegraphics[width=0.8\textwidth]{FIG/insert_binomial.pdf}
-\end{center}
-\caption{Anomaly in $insert$ operations for Binomial heaps. The y-axis shows the (total runtime cost)/(total expected cost). For one curve, the total expected cost is linear in $n$, and for the other it is quadratic in $n^2$. Total time is time for $n$ insert operations and maintaining the heap state in-between each insert}
-\label{fig:bino_anomaly}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{FIG/insert_binomial.pdf}
+	\end{center}
+	\caption{Anomaly in $insert$ operations for Binomial heaps. The y-axis shows the (total runtime cost)/(total expected cost). For one curve, the total expected cost is linear in $n$, and for the other it is quadratic in $n^2$. Total time is time for $n$ insert operations and maintaining the heap state in-between each insert}
+	\label{fig:bino_anomaly}
 \end{figure}
 
 \section{Fibonacci Heaps}
@@ -145,22 +147,62 @@ Fibonacci heaps are a generalization of Binomial heaps allowing additional opera
 
 Fibonacci heaps are implemented in $rkt-heaps$ using a DDL for its roots. Findings from array and functional based implementation of Binomial heaps, highlight the downsides of not having mutations which leads to much higher costs for performing primitive operations in contrast to what has been proved in literature. 
 
-As stated earlier that in a Fibonacci heap if only $deletemin$ and $meld$ operations were to be considered, then every tree becomes a binomial tree, thus ensuring the size of tree rooted at $r$ to be exponential in $rank(r)$. The exponential size of a tree is also valid for Fibonacci heaps with operations like $decrement$ and $delete$ \cite{kozen1992design}, and essential to ensure cutting of trees cost \BigO{1} and \BigO{\log n} for $decrement$ and $delete$ operations respectively. 
+As stated earlier that in a Fibonacci heap if only $deletemin$ and $meld$ operations were to be considered, then every tree becomes a binomial tree, and the heap Binomial. Thus, a corollary that the size of tree rooted at $r$ to be exponential in $rank(r)$. The exponential size of a tree is also valid for Fibonacci heaps with operations like $decrement$ and $delete$ \cite{kozen1992design}, and essential to ensure cutting of trees cost \BigO{1} and \BigO{\log n} for $decrement$ and $delete$ operations respectively. 
 
-$decrement$ operation mutates the value of the element, and followed by check on whether the heap property is violated or not. If it is, then the sub-tree rooted at that element, is added to the DDL of the heap. Ever element $e$ has a flag marked as true if one of its children have been removed and false otherwise. The sub-tree rooted at $e$ shall also cut from its parent if a second child of $e$ is removed i.e. the element is marked.
+$decrement$ operation mutates the value of the element, followed by check on whether the heap property is violated or not. If it is, then the sub-tree rooted at that element, is added to the DDL of the heap. Every element $e$ has a flag marked as true if one of its children have been removed and false otherwise. The sub-tree rooted at $e$ shall also be cut from its parent if a second child of $e$ is removed i.e. the element is marked and a decrement operation on a child violates the heap property or a child is deleted.
 
 $delete$ makes the value of the node to be deleted less than the min node using $decrement$ and then calls $deletemin$. This costs \BigO{\log n}.
 
+
 \section{Evaluation}
-insert for two 
-deletemin for two
-meld for two 
-findmin for all three
+For the evaluation section, we will omit comparisons between Binomial and Fibonacci heaps since one is purely functional and other is not. The functional is bound to increase the cost of operations as shown above. It is trivial to build on the Fibonacci heap implementation by excluding the $decrement$ and $deletemin$ operations to get a Binomial heap with lazy melds\cite{kozen1992design} at the same cost as shown for Fibonacci heaps in this section.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{FIG/insert.pdf}
+	\end{center}
+	\caption{}
+	\label{fig:fi_insert}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{FIG/decrement.pdf}
+		\caption{$decrement$ operation has a expected total cost of \BigO{n}. The graph looks like a mountain terrain because we are looking at amortized version of costs.}
+		\label{fig:fi_decrement}
+		\includegraphics[width=0.8\textwidth]{FIG/delete.pdf}
+		\caption{$delete$ operation has an expected total cost of \BigO{n \log n}. The sudden increase in the cost at $n=70\times10^3$ could be due the increase in the constant \# of steps by $decrement$ operation overwhelming the $\log$ \# of steps by $deletemin$ }
+		\label{fig:fi_delete}
+	\end{center}
+\end{figure}
+
+
+
+Binary heaps created using binary trees are compared with Fibonacci implementation of $rkt-heaps$ on operations which have equal time bounds viz. $deletemin$ and $findmin$.
+
+deletemin for two (deletemin)
+meld for one 
+findmin for two (findmin)
 
 decrement for one
 delete for one
 
 \section{Usage}
+This section describes usage of $rkt-heaps$ in Racket. Clone the repository using: 
+\begin{verbatim}
+git clone git@github.com:ajauhri/rkt-heaps.git 
+\end{verbatim}
+
+Open Racket in terminal or add to source using:
+\begin{verbatim}
+(require "$RKT_HEAPS_HOME/src/binomial.rkt")
+(require "$RKT_HEAPS_HOME/src/fibonacci.rkt")
+\end{verbatim}
+
+, where \$RKT\_HEAPS\_HOME is the root directory for the downloaded source.
+
+\subsection{Binomial Heaps in Racket}
+\includepdf[pages={-},nup=2x1]{../src/binomial.pdf}
 
 \section{Conclusion}
 

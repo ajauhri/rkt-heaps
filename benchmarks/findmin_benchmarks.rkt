@@ -35,11 +35,11 @@
                                      make-bi-heap 
                                      bi-time-findmin 
                                      linear) #:color 4 #:label "binary-findmin" #:x-min (+ ssize ssize) #:style 'dot)
-               (lines (get-plot-data ssize esize 
-                                     create-findmin-timing-vec
-                                     make-bino-heap 
-                                     bino-time-findmin
-                                     linear) #:color 1 #:label "binomial-findmin"  #:x-min (+ ssize ssize) #:style 'short-dash)
+               ;(lines (get-plot-data ssize esize 
+               ;                      create-findmin-timing-vec
+               ;                      make-bino-heap 
+               ;                      bino-time-findmin
+               ;                      linear) #:color 1 #:label "binomial-findmin"  #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize 
                                      create-findmin-timing-vec
                                      make-fi-heap 

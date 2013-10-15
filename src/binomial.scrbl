@@ -54,4 +54,7 @@ Returns a newly allocated heap by coupling @racket[h1] and @racket[h2].
 
 @defproc[(bino-count [h heap-lazy?]) exact-nonnegative-integer?]{
 
-Returns the count of the elements in the heap @racket[h]}
+Returns the count of the elements in the heap @racket[h]
+@examples[#:eval the-eval
+	(define h (bino-meld (bino-makeheap 1) (bino-makeheap 2)))
+	(bino-count h)]}

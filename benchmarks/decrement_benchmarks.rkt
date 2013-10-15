@@ -25,7 +25,7 @@
                                      create-decrement-timing-vec
                                      make-fi-heap
                                      fi-time-decrement
-                                     constant) #:color 2 #:label "fibonacci-decrement"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+                                     linear) #:color 2 #:label "fibonacci-decrement"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Total time (ms)/(Total expected time)" (format "decrement_~a_~a.pdf" ssize esize) 'pdf))
 
 

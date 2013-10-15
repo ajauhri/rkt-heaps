@@ -34,16 +34,16 @@
                ;                      make-bi-heap 
                ;                      bi-time-meld
                ;                      logarithmic) #:color 4 #:label "binary-meld" #:x-min (+ ssize ssize) #:style 'dot)
-               (lines (get-plot-data ssize esize 
-                                     create-meld-timing-vec
-                                     make-bino-heap 
-                                     bino-time-meld
-                                     logarithmic) #:color 1 #:label "binomial-meld (eager)" #:x-min (+ ssize ssize) #:style 'short-dash)
+               ;(lines (get-plot-data ssize esize 
+               ;                      create-meld-timing-vec
+               ;                      make-bino-heap 
+               ;                      bino-time-meld
+               ;                      logarithmic) #:color 1 #:label "binomial-meld (eager)" #:x-min (+ ssize ssize) #:style 'short-dash)
                (lines (get-plot-data ssize esize
                                      create-meld-timing-vec
                                      make-fi-heap 
                                      fi-time-meld
-                                     logarithmic) #:color 2 #:label "fibonacci-meld" #:x-min (+ ssize ssize) #:style 'dot-dash))
+                                     linearithmic) #:color 2 #:label "fibonacci-meld" #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" 'pdf))
 
 (command-line 
