@@ -13,7 +13,7 @@ Fibonacci Heaps
 
 A @deftech{Fibonacci heap} is a data structure for maintaining a collection of elements. In addition to the binomial heap operations, Fibonacci heaps provide two additional operations viz. @deftech{decrement} and @deftech{delete} exist. Although, it should be noted that that trees in @deftech{Fibonacci heaps} are not binomial trees as the implementation cuts subtrees out of them in a controlled way. The rank of a tree is the number of children of the root, and as with binomial heaps we only link two trees if they have the same rank. 
 
-Roots of binomial tress in the heap are stored in the form of a circular linked list; each node has a reference to a left and right node.
+Roots of binomial tress in the heap are stored in the form of a doubly linked list; each node has a reference to a left and right node.
 
 @defproc[(fi-makeheap [val number?]) fi-heap?]{
 
