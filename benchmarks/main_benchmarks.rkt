@@ -17,7 +17,7 @@
                          (fi-node-right n)))
          (maxrnk (inexact->exact (ceiling (/ (log (fi-heap-size h)) (log 2)))))
          (fibvec (fib-seq (vector 0) 0 1 (+ 1 maxrnk))) ; +1 may turn out to be a hack
-         (depth (vector-ref fibvec (+ ri 1)))) ; max depth of a path is F_[d+2], where F_i is the ith fibonacci number. The indicies adjustment makes it (ri+1)
+         (depth (vector-ref fibvec (+ (vector-length (fi-node-children root)) 1)))) ; max depth of a path is F_[r+2], where F_i is the ith fibonacci number and r is the rank of the element
 
     (define (random-depth-traversal n step depth)
       (cond ((= step depth) n)

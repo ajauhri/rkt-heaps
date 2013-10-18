@@ -42,17 +42,17 @@
                ;                      create-insert-timing-vec
                ;                      make-bino-heap 
                ;                      bino-time-insert 
-               ;                      quadratic) #:color 1 #:label "binomial-insert (quadratic)" #:x-min (+ ssize ssize) #:style 'short-dash)
-               ;(lines (get-plot-data ssize esize 
-               ;                      create-insert-timing-vec
-               ;                      make-bino-heap 
-               ;                      bino-time-insert 
-               ;                      linear) #:color 2 #:label "binomial-insert (linear)" #:x-min (+ ssize ssize) #:style 'long-dash))
-               (lines (get-plot-data ssize esize
+               ;                      quadratic) #:color 1 #:label "binomial-insert (quadratic)" #:x-min (+ ssize ssize) #:style 'short-dash))
+               (lines (get-plot-data ssize esize 
                                      create-insert-timing-vec
-                                     make-fi-heap 
-                                     fi-time-insert 
-                                     linear) #:color 2 #:label "fibonacci-insert" #:x-min (+ ssize ssize) #:style 'dot-dash))
+                                     make-bino-heap 
+                                     bino-time-insert 
+                                     linear) #:color 2 #:label "binomial-insert (linear)" #:x-min (+ ssize ssize) #:style 'long-dash))
+               ;(lines (get-plot-data ssize esize
+               ;                      create-insert-timing-vec
+               ;                      make-fi-heap 
+               ;                      fi-time-insert 
+               ;                      linear) #:color 2 #:label "fibonacci-insert" #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" (format "insert_~a_~a.pdf" ssize esize) 'pdf))
 
 (command-line 

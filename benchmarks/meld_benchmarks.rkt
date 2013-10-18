@@ -43,8 +43,8 @@
                                      create-meld-timing-vec
                                      make-fi-heap 
                                      fi-time-meld
-                                     linearithmic) #:color 2 #:label "fibonacci-meld" #:x-min (+ ssize ssize) #:style 'dot-dash))
-             #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" 'pdf))
+                                     linear) #:color 2 #:label "fibonacci-meld" #:x-min (+ ssize ssize) #:style 'dot-dash))
+             #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" (format "meld_~a_~a.pdf" ssize esize) 'pdf))
 
 (command-line 
   #:args
