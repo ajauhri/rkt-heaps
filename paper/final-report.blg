@@ -4,45 +4,46 @@ The top-level auxiliary file: final-report.aux
 The style file: plain.bst
 Database file #1: BIB/refs.bib.bib
 Warning--to sort, need author or key in racket_dialect
-You've used 5 entries,
+Warning--to sort, need author or key in racket_binary
+You've used 6 entries,
             2118 wiz_defined-function locations,
-            525 strings with 4552 characters,
-and the built_in function-call counts, 1254 in all, are:
-= -- 122
-> -- 35
+            528 strings with 4642 characters,
+and the built_in function-call counts, 1422 in all, are:
+= -- 139
+> -- 36
 < -- 0
-+ -- 18
++ -- 19
 - -- 10
-* -- 71
-:= -- 208
-add.period$ -- 15
-call.type$ -- 5
-change.case$ -- 18
+* -- 76
+:= -- 227
+add.period$ -- 18
+call.type$ -- 6
+change.case$ -- 21
 chr.to.int$ -- 0
-cite$ -- 6
-duplicate$ -- 53
-empty$ -- 122
+cite$ -- 8
+duplicate$ -- 60
+empty$ -- 145
 format.name$ -- 10
-if$ -- 264
+if$ -- 306
 int.to.chr$ -- 0
-int.to.str$ -- 5
+int.to.str$ -- 6
 missing$ -- 6
-newline$ -- 28
+newline$ -- 33
 num.names$ -- 8
-pop$ -- 31
+pop$ -- 41
 preamble$ -- 1
-purify$ -- 15
+purify$ -- 17
 quote$ -- 0
-skip$ -- 32
+skip$ -- 37
 stack$ -- 0
-substring$ -- 78
-swap$ -- 5
+substring$ -- 83
+swap$ -- 6
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 16
-warning$ -- 1
+type$ -- 20
+warning$ -- 2
 while$ -- 12
-width$ -- 6
-write$ -- 53
-(There was 1 warning)
+width$ -- 7
+write$ -- 62
+(There were 2 warnings)

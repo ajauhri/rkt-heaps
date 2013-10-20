@@ -51,7 +51,7 @@
 %\vspace{-0.1in}
 $rkt-heaps$ was made for demonstration in a contest, \textit{Lisp In Summer Projects}\footnote{http://lispinsummerprojects.org/}. Any participant was expected to develop one or many applications, or libraries, using any LISP-based technology. $rkt-heaps$ uses Racket, a dialect of the Lisp language and based on the scheme branch of the Lisp family \cite{racket_dialect}. 
 
-\emph{Section 1 \& 2} describe Binomial and Fibonacci heaps respectively. \emph{Section 3} has performance results to ascertain $rkt-heaps$ correspond to run-time bounds as shown in literature. Comparison with an existing library for Binary heaps\footnote{http://docs.racket-lang.org/data/Binary\_Heaps.html} in Racket is added to observe any runtime improvements in practice for operations which have similar run-time bounds in theory. \emph{Section 4} has conclusions and author's learnings. \emph{Appendix} includes syntactics of using this library in Racket. 
+\emph{Section 1 \& 2} describe Binomial and Fibonacci heaps respectively. \emph{Section 3} has performance results to ascertain $rkt-heaps$ correspond to run-time bounds as shown in literature. Comparison with an existing library for Binary heaps\cite{racket_binary} in Racket is added to observe any runtime improvements in practice for operations which have similar run-time bounds in theory. \emph{Section 4} has conclusions and author's learnings. \emph{Appendix} includes syntactics of using this library in Racket. 
 
 \section{Binomial Heaps}
 Binomial heaps are a collection of heap-ordered Binomial trees with a pointer $min$ to the root of a tree having the minimum value amongst all elements in the heap. Primitive operations described in \cite{kozen1992design} are as follows: \\
@@ -154,9 +154,9 @@ $delete$ makes the value of the element to be deleted less than the $min$ value 
 
 
 \section{Evaluation}
-For this section, comparisons are omitted between Binomial and Fibonacci heaps since one is purely functional and other is not. The functional technique was inefficient due to cloning of vectors as shown in Section $2$. It is trivial to build on the Fibonacci heap implementation by excluding the $decrement$ and $deletemin$ operations to get a Binomial heap with lazy melds\cite{kozen1992design} at the same cost as shown for Fibonacci heaps in this section. 
+In this section, comparisons are omitted between Binomial and Fibonacci heaps since one is purely functional and other is not. The functional technique was inefficient due to cloning of vectors as shown in Section $2$. It is trivial to build on the Fibonacci heap implementation by excluding the $decrement$ and $deletemin$ operations to get a Binomial heap with lazy melds\cite{kozen1992design} at the same cost as shown for Fibonacci heaps in this section. 
 
-In Figure \ref{fig:fi_insert_meld}, the curves have mountainous terrain as it the amortized total expected cost.
+Fibonacci heap performance for operatios viz. $insert$ and $meld$ are shown in Figure \ref{fig:fi_insert_meld}. The curves have mountainous terrain as it the amortized total expected cost.
 
 \begin{figure}
 	\begin{subfigure}{0.5\textwidth}
@@ -175,7 +175,7 @@ In Figure \ref{fig:fi_insert_meld}, the curves have mountainous terrain as it th
 	\label{fig:fi_insert_meld}
 \end{figure}
 
-As stated before, $delete$ involves a call to $decrement$ to mutate the value of the node less than the $min$ value in the heap, and subsequently to $deletemin$. In Figure \ref{fig:fi_delete}, there is a gradual increase in the slope of the curve. This is probably due to the increase in the constant, \BigO{1} number of steps by $decrement$ operation exceeding the \BigO{\log n} number of steps by $deletemin$. It should be noted that for benchmarking a heap $h$ of size $n$, the $delete$ operation is called $n$ times, and state of $h$ is maintained in-between all $delete$ operations. To find an element to be deleted, a simple random walk is performed on $h$. Algorithm \ref{alg:rand_walk} states clearly the random walk procedure. Therefore, for decrement operation which recursively removes parents while traversing up the graph, there is a high chance that the length of path traversed is positively correlated to number of calls to $delete$ operation $h$. As a consequence, constant cost of $decrement$ increases and thereby not keeping the ratio of total time over total expected cost constant for $delete$ operation.
+As stated before, $delete$ involves a call to $decrement$ to mutate the value of the node less than the $min$ value in the heap, and subsequently to $deletemin$. In Figure \ref{fig:fi_delete}, there is a gradual increase in the slope of the curve. This is probably due to the increase in the constant, \BigO{1}, number of steps by $decrement$ operation exceeding the \BigO{\log n} number of steps by $deletemin$. It should be noted that for benchmarking a heap $h$ of size $n$, the $delete$ operation is called $n$ times, and state of $h$ is maintained in-between all $delete$ operations. To find an element to be deleted, a simple random walk is performed on $h$. Algorithm \ref{alg:rand_walk} states the random walk procedure. Therefore, for decrement operation which recursively removes parents while traversing up the graph, there is a high chance that the length of path traversed is positively correlated to number of calls to $delete$ operation $h$. As a consequence, constant cost of $decrement$ increases and thereby making the ratio of total time over total expected cost to increase with $n$ for $delete$ operation.
 
 \begin{algorithm}[!ht]
 	\caption{Random Walk for Fibonacci heap $H_f$}
@@ -235,17 +235,18 @@ Pre-packaged library for Binary heap in $Racket$ is compared with Fibonacci impl
 In this paper:
 \begin{itemize}
 	\item Binomial heaps included in $rkt-heaps$ do not run in expected time since they have been implemented in a functional style
-	\item $rkt-heaps$ provide an efficient implementation of Fibonacci heaps using doubly linked lists
-	\item Fibonacci heaps perform better than the existing Racket library implementation of Binary heaps
+	\item $rkt-heaps$ provide an efficient implementation of Fibonacci heaps using doubly linked lists(DDL)
+	\item Fibonacci heaps perform better than the existing Racket library implementation of Binary heaps for comparable operations
 	\item Fibonacci heaps can be easily extended to work as Binomial heaps although it will not be purely functional
 \end{itemize}
 
 \subsection{Author's learnings}
 \begin{itemize}
 	\item Initially, this work was started using mit-scheme but later migrated to Racket since there was better support for generation of graphs, testing and debugging
-	\item Took a while to understand functional style of implementing heaps
-	\item Run-time graphs\footnote{A special thanks to Dhruv Matani (http://dhruvbird.com) for his inputs in making graphs more meaningful} were essential to ascertain the algorithms were performing correctly as stated in literature
+	\item Understanding functional style of implementing heaps
+	\item Run-time graphs\footnote{Thanks to Dhruv Matani (http://dhruvbird.com) for his inputs in making graphs more meaningful} are essential to ascertain the algorithms were performing correctly as stated in literature
 	\item Pure functional implementations can be slow 
+    \item A mutation can dependent on other mutations, hence sequence of mutations is important for correctness of an operation
 \end{itemize}
 		
 
