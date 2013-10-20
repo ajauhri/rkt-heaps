@@ -1,46 +1,48 @@
-This is BibTeX, Version 0.99d (TeX Live 2012/Debian)
+This is BibTeX, Version 0.99d (TeX Live 2011)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: final-report.aux
 The style file: plain.bst
 Database file #1: BIB/refs.bib.bib
-You've used 4 entries,
+Warning--to sort, need author or key in racket_dialect
+You've used 5 entries,
             2118 wiz_defined-function locations,
-            521 strings with 4451 characters,
-and the built_in function-call counts, 1086 in all, are:
-= -- 105
-> -- 34
+            525 strings with 4552 characters,
+and the built_in function-call counts, 1254 in all, are:
+= -- 122
+> -- 35
 < -- 0
-+ -- 17
++ -- 18
 - -- 10
-* -- 66
-:= -- 189
-add.period$ -- 12
-call.type$ -- 4
-change.case$ -- 15
+* -- 71
+:= -- 208
+add.period$ -- 15
+call.type$ -- 5
+change.case$ -- 18
 chr.to.int$ -- 0
-cite$ -- 4
-duplicate$ -- 46
-empty$ -- 99
+cite$ -- 6
+duplicate$ -- 53
+empty$ -- 122
 format.name$ -- 10
-if$ -- 222
+if$ -- 264
 int.to.chr$ -- 0
-int.to.str$ -- 4
+int.to.str$ -- 5
 missing$ -- 6
-newline$ -- 23
+newline$ -- 28
 num.names$ -- 8
-pop$ -- 21
+pop$ -- 31
 preamble$ -- 1
-purify$ -- 13
+purify$ -- 15
 quote$ -- 0
-skip$ -- 27
+skip$ -- 32
 stack$ -- 0
-substring$ -- 73
-swap$ -- 4
+substring$ -- 78
+swap$ -- 5
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 12
-warning$ -- 0
+type$ -- 16
+warning$ -- 1
 while$ -- 12
-width$ -- 5
-write$ -- 44
+width$ -- 6
+write$ -- 53
+(There was 1 warning)
