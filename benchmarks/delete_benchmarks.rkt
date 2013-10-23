@@ -15,7 +15,7 @@
                        (let ((res (time-method h)))
                         (set! h (car res))
                         (cdr res)))
-                 (* ((car opts) i) i)))))
+                 ((car opts) i)))))
 
 (define (plot-delete ssize esize)
   (plot-file (list 
@@ -23,7 +23,7 @@
                                      create-delete-timing-vec
                                      make-fi-heap
                                      fi-time-delete
-                                     constant) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
+                                     linearithmic) #:color 2 #:label "fibonacci-delete"  #:x-min (+ ssize ssize) #:style 'dot-dash))
              #:x-label "n" #:y-label "Total time (ms)/(Total expected cost)" (format "delete_~a_~a.pdf" ssize esize) 'pdf))
 
 (command-line 

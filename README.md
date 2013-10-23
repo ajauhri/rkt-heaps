@@ -14,9 +14,9 @@ Binomial heap is a collection of heap-ordered binomial trees with a pointer `min
 
 Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Specifically, they allow deletion of a `node` from the heap, and modification of the value of a `node` in the heap. For a more detailed description, refer to materials cited above.
 
-A whitepaper can be found [here](https://www.dropbox.com/s/2zmca8om1s7t8jo/final-report.pdf) 
+The whitepaper is available [here](https://www.dropbox.com/s/2zmca8om1s7t8jo/final-report.pdf).
 
-High resolution figures in the whitepaper can be found here:
+High resolution figures in the whitepaper for easy viewing are available here:
 
 * [Binomial Heaps Anomaly(linear)](https://www.dropbox.com/s/ta9hdb4sz8t9izg/insert_binomial_linear.pdf) 
 * [Binomial Heaps Anomaly(quadratic)](https://www.dropbox.com/s/zps81vwqfaxuzm9/insert_binomial_quad.pdf) 
@@ -52,7 +52,7 @@ Benchmarks can be easily generated for all core functions using files [here](htt
 * ssize - the starting size of the heap in the benchmark
 * esize - the largest size of the heap to be included in the benchmark
 
-For example, `./delete_benchmarks.rkt 10 100` will have timing of operations measured over heap sizes - 10 20 30 40 50 60 70 80 90 100 over the total expected cost (in this case it is `O(log n)`). It will generate a pdf file titled as `delete_benchmarks_10_100.pdf`.
+For example, `./delete_benchmarks.rkt 10 100` will have timing of operations measured over heap sizes - 10 20 30 40 50 60 70 80 90 100 over the total expected cost (in this case it is `O(nlog n)`). It will generate a pdf file titled as `delete_benchmarks_10_100.pdf`.
 
 Running the test suite 
 ----
