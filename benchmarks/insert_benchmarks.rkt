@@ -47,7 +47,7 @@
                                      create-insert-timing-vec
                                      make-bino-heap 
                                      bino-time-insert 
-                                     linear) #:color 2 #:label "binomial-insert (linear)" #:x-min (+ ssize ssize) #:style 'long-dash))
+                                     linear) #:color 1 #:label "binomial-insert (linear)" #:x-min (+ ssize ssize) #:style 'long-dash))
                ;(lines (get-plot-data ssize esize
                ;                      create-insert-timing-vec
                ;                      make-fi-heap 
