@@ -58,12 +58,13 @@ Running the test suite
 ----
 
 Test cases can be found [here](https://github.com/ajauhri/rkt-heaps/tree/master/tests), and individual test suite can be run using:
-	
-	./rkt-heaps/tests/binomial_tests
-	./rkt-heaps/tests/binomial_helper_tests
-	./rkt-heap/tests/fibonacci_tests
+
+	cd rkt-heaps/tests/	
+	./binomial_tests
+	./binomial_helper_tests
+	./fibonacci_tests
 
 All tests can be run using:
 
-	./rkt-heaps/tests/run_all_tests.rkt
+	./run_all_tests.rkt
 

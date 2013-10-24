@@ -171,7 +171,7 @@ Fibonacci heap performance for operatios viz. $insert$ and $meld$ are shown in F
 		\caption{Total expected cost = \BigO{n}}
 		\label{fig:fi_meld}
 	\end{subfigure}
-	\caption{Fibonacci Heaps, $insert$ and $meld$ operations}
+	\caption{Fibonacci Heaps -  (a) $insert$ and (b) $meld$ operations}
 	\label{fig:fi_insert_meld}
 \end{figure}
 
@@ -207,12 +207,12 @@ As stated before, $delete$ involves a call to $decrement$ to mutate the value of
 		\caption{Total expected cost = \BigO{n}}
 		\label{fig:fi_decrement}
 	\end{subfigure}
-	\caption{Fibonacci Heaps, $delete$ and $decrement$ operations.}
+	\caption{Fibonacci Heaps - (a) $delete$ and (b) $decrement$ operations.}
 	\label{fig:fi_delete_decrement}
 \end{figure}
 
 
-Pre-packaged library for Binary heap in Racket is compared with Fibonacci implementation of $rkt-heaps$ on operations which have equal expected time bounds viz. $findmin$(Figure \ref{fig:findmin}) and $deletemin$(Figure \ref{fig:deletemin}). Fibonacci heaps outperforms Binary heaps in both operations. The equivalent operations in Binary heap library are called as $heap-min$ and $heap-remove-min$.
+Pre-packaged library for Binary heap in Racket is compared with Fibonacci implementation of $rkt-heaps$ on operations which have equal expected time bounds viz. $findmin$(Figure \ref{fig:findmin}) and $deletemin$(Figure \ref{fig:deletemin}). The reasons for the variability at $n\ge80,000$ in Figure \ref{fig:findmin} and for $n\le40,000$ in Figure \ref{fig:deletemin} are unknown. Fibonacci heaps outperforms Binary heaps in both operations. The equivalent operations in Binary heap library are called as $heap-min$ and $heap-remove-min$.
 
 \begin{figure}
 	\begin{subfigure}{0.5\textwidth}
@@ -227,7 +227,7 @@ Pre-packaged library for Binary heap in Racket is compared with Fibonacci implem
 		\caption{Total expected cost = \BigO{n \log n}}
 		\label{fig:deletemin}
 	\end{subfigure}
-	\caption{Binary Heaps vs Fibonacci Heaps, $findmin$ and $deletemin$ operations.}
+	\caption{Binary Heaps vs Fibonacci Heaps - (a) $findmin$ and (b) $deletemin$ operations.}
 	\label{fig:fi_bi_comp}
 \end{figure}
 
