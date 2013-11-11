@@ -44,7 +44,7 @@
 \maketitle
 
 \begin{abstract}
-	Library\footnote{A software package and will be referred as $rkt-heaps$ throughout the paper} providing data structures viz. Binomial heap \cite{vuillemin1978data} and Fibonacci heap\cite{fredman1987fibonacci} are described with primitive operations, performance and usage. 
+	Library\footnote{A software package and will be referred as $rkt-heaps$ throughout the paper} providing data structures viz. Binomial heap \cite{vuillemin1978data} and Fibonacci heap\cite{fredman1987fibonacci} is described with primitive operations, performance and usage. 
 \end{abstract}
 
 \section{Introduction}
@@ -236,17 +236,16 @@ In this paper:
 \begin{itemize}
 	\item Binomial heaps included in $rkt-heaps$ do not run in expected time since they have been implemented in a functional style
 	\item $rkt-heaps$ provide an efficient implementation of Fibonacci heaps using doubly linked lists (DLL)
-	\item Fibonacci heaps perform better than the existing Racket library implementation of Binary heaps for comparable operations
-	\item Fibonacci heaps can be easily extended to work as Binomial heaps although it will not be purely functional
+	\item Fibonacci heaps perform better than Binary heaps (with the existing Racket library implementation) for comparable operations
+	\item Fibonacci heaps can be easily extended to work as Binomial heaps, although this approach may not be purely functional
 \end{itemize}
 
 \subsection{Author's learnings}
+Initially, this work was started using mit-scheme but later it was migrated to Racket as there was better support for generation of graphs, testing and debugging. Over the course of this project, a few learnings were achieved:
 \begin{itemize}
-	\item Initially, this work was started using mit-scheme but later migrated to Racket since there was better support for generation of graphs, testing and debugging
-	\item Understanding functional style of implementing heaps
-	\item Run-time graphs\footnote{Thanks to Dhruv Matani (http://dhruvbird.com) for his inputs in making graphs more meaningful} are essential to ascertain the algorithms were performing correctly as stated in literature
+	\item Run-time graphs\footnote{Thanks to Dhruv Matani (http://dhruvbird.com) for his inputs in making graphs more meaningful} are essential to ascertain whether algorithms were performing correctly, as stated in literature
 	\item Pure functional implementations can be slow 
-    \item A mutation can dependent on other mutations, hence sequence of mutations is important for correctness of an operation
+    \item A mutation can depend on other mutations, hence sequence of mutations is important for correctness of an operation
 \end{itemize}
 		
 
