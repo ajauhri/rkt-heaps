@@ -14,18 +14,18 @@ Binomial heap is a collection of heap-ordered binomial trees with a pointer `min
 
 Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Specifically, they allow deletion of a `node` from the heap, and modification of the value of a `node` in the heap. For a more detailed description, refer to materials cited above.
 
-The whitepaper is available [here](https://www.dropbox.com/s/2zmca8om1s7t8jo/final-report.pdf).
+The whitepaper is available [here](https://www.abhinavjauhri.com/rkt-heaps.pdf).
 
 High resolution figures in the whitepaper for easy viewing are available here:
 
-* [Binomial Heaps Anomaly(linear)](https://www.dropbox.com/s/ta9hdb4sz8t9izg/insert_binomial_linear.pdf) 
-* [Binomial Heaps Anomaly(quadratic)](https://www.dropbox.com/s/zps81vwqfaxuzm9/insert_binomial_quad.pdf) 
-* [Fibonacci Heaps (insert)](https://www.dropbox.com/s/tk988xsu7qmcmr3/fi_insert.pdf)
-* [Fibonacci Heaps (meld)](https://www.dropbox.com/s/q30a15eqxpikge5/fi_meld.pdf) 
-* [Fibonacci Heaps (delete)](https://www.dropbox.com/s/i2ut55g0k36krgd/fi_delete.pdf) 
-* [Fibonacci Heaps (decrement)](https://www.dropbox.com/s/up6l1wfiaj3inh9/fi_decrement.pdf)
-* [Binary vs Fibonacci (findmin)](https://www.dropbox.com/s/7rh758163bn0zbk/findmin.pdf)
-* [Binary vs Fibonacci (deletemin)](https://www.dropbox.com/s/s8jl62ovd8g2t4n/deletemin.pdf)
+* [Binomial Heaps Anomaly(linear)](https://www.abhinavjauhri.com/projects/rkt-heaps/insert_binomial_linear.pdf) 
+* [Binomial Heaps Anomaly(quadratic)](https://www.abhinavjauhri.com/projects/rkt-heaps/insert_binomial_quad.pdf) 
+* [Fibonacci Heaps (insert)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_insert.pdf)
+* [Fibonacci Heaps (meld)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_meld.pdf) 
+* [Fibonacci Heaps (delete)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_delete.pdf) 
+* [Fibonacci Heaps (decrement)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_decrement.pdf)
+* [Binary vs Fibonacci (findmin)](https://www.abhinavjauhri.com/projects/rkt-heaps/findmin.pdf)
+* [Binary vs Fibonacci (deletemin)](https://www.abhinavjauhri.com/projects/rkt-heaps/deletemin.pdf)
 
 Usage
 ----
