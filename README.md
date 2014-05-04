@@ -18,14 +18,14 @@ The whitepaper is available [here](https://www.abhinavjauhri.com/rkt-heaps.pdf).
 
 High resolution figures in the whitepaper for easy viewing are available here:
 
-* [Binomial Heaps Anomaly(linear)](https://www.abhinavjauhri.com/projects/rkt-heaps/insert_binomial_linear.pdf) 
-* [Binomial Heaps Anomaly(quadratic)](https://www.abhinavjauhri.com/projects/rkt-heaps/insert_binomial_quad.pdf) 
-* [Fibonacci Heaps (insert)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_insert.pdf)
-* [Fibonacci Heaps (meld)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_meld.pdf) 
-* [Fibonacci Heaps (delete)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_delete.pdf) 
-* [Fibonacci Heaps (decrement)](https://www.abhinavjauhri.com/projects/rkt-heaps/fi_decrement.pdf)
-* [Binary vs Fibonacci (findmin)](https://www.abhinavjauhri.com/projects/rkt-heaps/findmin.pdf)
-* [Binary vs Fibonacci (deletemin)](https://www.abhinavjauhri.com/projects/rkt-heaps/deletemin.pdf)
+* [Binomial Heaps Anomaly(linear)](http://abhinavjauhri.com/projects/rkt-heaps/insert_binomial_linear.pdf) 
+* [Binomial Heaps Anomaly(quadratic)](http://abhinavjauhri.com/projects/rkt-heaps/insert_binomial_quad.pdf) 
+* [Fibonacci Heaps (insert)](http://www.abhinavjauhri.com/projects/rkt-heaps/fi_insert.pdf)
+* [Fibonacci Heaps (meld)](http://www.abhinavjauhri.com/projects/rkt-heaps/fi_meld.pdf) 
+* [Fibonacci Heaps (delete)](http://www.abhinavjauhri.com/projects/rkt-heaps/fi_delete.pdf) 
+* [Fibonacci Heaps (decrement)](http://www.abhinavjauhri.com/projects/rkt-heaps/fi_decrement.pdf)
+* [Binary vs Fibonacci (findmin)](http://www.abhinavjauhri.com/projects/rkt-heaps/findmin.pdf)
+* [Binary vs Fibonacci (deletemin)](http://www.abhinavjauhri.com/projects/rkt-heaps/deletemin.pdf)
 
 Usage
 ----
