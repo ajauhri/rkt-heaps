@@ -14,7 +14,7 @@ Binomial heap is a collection of heap-ordered binomial trees with a pointer `min
 
 Fibonacci heaps, are a generalization of Binomial heaps allowing additional features other than those in binomial heaps. Specifically, they allow deletion of a `node` from the heap, and modification of the value of a `node` in the heap. For a more detailed description, refer to materials cited above.
 
-The whitepaper is available [here](https://www.abhinavjauhri.com/rkt-heaps.pdf).
+The whitepaper is available [here](http://www.abhinavjauhri.com/projects/rkt-heaps/rkt-heaps.pdf).
 
 High resolution figures in the whitepaper for easy viewing are available here:
 
